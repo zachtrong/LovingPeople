@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_welcome"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:src="@drawable/img_united_rotate"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/welcome_message"
+            android:textColor="#FFF"
+            android:textSize="24sp"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:textColorHint="#FFF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/et_user_welcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/welcome_username"
+                android:maxLength="20"
+                android:maxLines="1"
+                android:inputType="textAutoComplete" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:textColorHint="#FFF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/et_pass_welcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/welcome_password"
+                android:maxLength="20"
+                android:maxLines="1"
+                android:inputType="textPassword"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/til_pass_confirm_welcome"
+            android:textColorHint="#FFF"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/et_pass_confirm_welcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/welcome_password_confirm"
+                android:maxLength="20"
+                android:maxLines="1"
+                android:inputType="textPassword"
+                />
+
+        </android.support.design.widget.TextInputLayout>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+        <com.dd.processbutton.iml.ActionProcessButton
+            android:id="@+id/sp_bt_signin_welcome"
+            app:pb_textComplete="@string/welcome_complete"
+            app:pb_textError="@string/welcome_error"
+            app:pb_textProgress="@string/welcome_progress"
+            android:textColor="#FFF"
+            android:text="@string/welcome_log_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+        <com.dd.processbutton.iml.ActionProcessButton
+            android:id="@+id/sp_bt_signup_welcome"
+            app:pb_textComplete="@string/welcome_complete"
+            app:pb_textError="@string/welcome_error"
+            app:pb_textProgress="@string/welcome_progress"
+            android:textColor="#FFF"
+            android:text="@string/welcome_sign_up"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bt_signin_back_welcome"
+        android:visibility="gone"
+        android:background="#00000000"
+        android:text="@string/welcome_log_in_back"
+        android:textColor="#FFF"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

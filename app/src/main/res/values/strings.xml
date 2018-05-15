@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Connecting Students</string>
+    <string name="title_home">Home</string>
+    <string name="title_share">Share</string>
+    <string name="title_listen">Listen</string>
+    <string name="title_friends">Friends</string>
+
+    <string name="title_search">Searching</string>
+    <string name="hint_enter_a_message">Type a message&#8230;</string>
+
+    <string name="welcome_message">Welcome to\nConnecting Students</string>
+    <string name="welcome_username">Username</string>
+    <string name="welcome_password">Password</string>
+    <string name="welcome_password_confirm">Confirm Password</string>
+    <string name="welcome_log_in">Log In</string>
+    <string name="welcome_log_in_back">Back To Log In</string>
+    <string name="welcome_sign_up">Sign Up</string>
+    <string name="welcome_complete">Complete</string>
+    <string name="welcome_error">Error</string>
+    <string name="welcome_progress">Loading</string>
+
+    <string name="error_invalid_username">Invalid Username</string>
+    <string name="error_invalid_password">Invalid Password</string>
+    <string name="error_invalid_matching">Not Match!</string>
+
+    <string name="action_logout">Logout</string>
+</resources>

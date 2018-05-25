@@ -35,6 +35,7 @@ dependencies {
 
     implementation 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
     implementation 'com.github.stfalcon:chatkit:0.2.2'
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'

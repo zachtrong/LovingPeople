@@ -27,12 +27,7 @@ public class SplashScreenActivity extends BaseActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
 
-        Intent intent;
-        if (SyncUser.current() != null) {
-            intent = new Intent(getApplicationContext(), MainActivity.class);
-        } else {
-            intent = new Intent(getApplicationContext(), WelcomeActivity.class);
-        }
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();
     }

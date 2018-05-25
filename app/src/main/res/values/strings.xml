@@ -5,9 +5,11 @@
     <string name="title_contribute">Contribution</string>
     <string name="title_resource">Resource</string>
 
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Anonymous</string>
+    <string name="nav_header_subtitle">id</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_open">Opening Drawer</string>
+    <string name="navigation_drawer_close">Closing Drawer</string>
 
     <string name="title_search">Searching</string>
     <string name="hint_enter_a_message">Type a message&#8230;</string>

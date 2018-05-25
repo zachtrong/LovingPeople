@@ -9,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -105,13 +107,30 @@ public class MainActivity extends BaseActivity
 	Fragment getFragmentFromId(int id) {
 		switch (id) {
 			case R.id.navigation_home:
-				return HomeFragment.getInstance();
+				return new HomeFragment();
 			case R.id.navigation_message:
-				return MessageFragment.getInstance();
+				return new MessageFragment();
 			case R.id.navigation_resource:
-				return ResourceFragment.getInstance();
+				return new ResourceFragment();
 			default:
-				return HomeFragment.getInstance();
+				return new HomeFragment();
 		}
+	}
+
+	public ActionBarDrawerToggle registerDrawerToggle(Toolbar toolbar) {
+		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+				this,
+				drawerLayout,
+				toolbar,
+				R.string.navigation_drawer_close,
+				R.string.navigation_drawer_close
+		);
+		drawerLayout.addDrawerListener(toggle);
+		toggle.syncState();
+		return toggle;
+	}
+
+	public void unRegisterDrawerToggle(ActionBarDrawerToggle drawerToggle) {
+		drawerLayout.removeDrawerListener(drawerToggle);
 	}
 }

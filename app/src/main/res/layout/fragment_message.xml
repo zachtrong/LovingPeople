@@ -6,35 +6,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/tb_resource"
+        android:id="@+id/tb_message"
+        app:title="@string/title_message"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         />
 
-    <com.stfalcon.chatkit.messages.MessagesList
-        android:id="@+id/ml_message"
+    <com.stfalcon.chatkit.dialogs.DialogsList
+        android:id="@+id/dl_message"
+        android:layout_below="@id/tb_message"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/mi_message" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_above="@+id/mi_message"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/gray"/>
-
-    <com.stfalcon.chatkit.messages.MessageInput
-        android:id="@+id/mi_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:inputHint="@string/hint_enter_a_message"
-        app:showAttachmentButton="true"
-        />
+        android:layout_height="match_parent"/>
 </RelativeLayout>

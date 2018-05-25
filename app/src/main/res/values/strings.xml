@@ -1,14 +1,18 @@
 <resources>
-    <string name="app_name">Connecting Students</string>
+    <string name="app_name">Loving People</string>
     <string name="title_home">Home</string>
-    <string name="title_share">Share</string>
-    <string name="title_listen">Listen</string>
-    <string name="title_friends">Friends</string>
+    <string name="title_message">Message</string>
+    <string name="title_contribute">Contribution</string>
+    <string name="title_resource">Resource</string>
+
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
 
     <string name="title_search">Searching</string>
     <string name="hint_enter_a_message">Type a message&#8230;</string>
 
-    <string name="welcome_message">Welcome to\nConnecting Students</string>
+    <string name="welcome_message">Welcome to\nLoving People</string>
     <string name="welcome_username">Username</string>
     <string name="welcome_password">Password</string>
     <string name="welcome_password_confirm">Confirm Password</string>

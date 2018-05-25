@@ -1,36 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_home"
+            android:enabled="true"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="@string/title_home"
+            app:showAsAction="ifRoom"
+            />
 
-    <item
-        android:id="@+id/navigation_home"
-        android:enabled="true"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_home"
-        app:showAsAction="ifRoom"
-        />
+        <item
+            android:id="@+id/navigation_message"
+            android:enabled="true"
+            android:icon="@drawable/ic_message_text"
+            android:title="@string/title_message"
+            app:showAsAction="ifRoom"
+            />
 
-    <item
-        android:id="@+id/navigation_share"
-        android:enabled="true"
-        android:icon="@drawable/ic_chat_bubble_black_24dp"
-        android:title="@string/title_share"
-        app:showAsAction="ifRoom"
-        />
+        <item
+            android:id="@+id/navigation_resource"
+            android:enabled="true"
+            android:icon="@drawable/ic_library_book"
+            android:title="@string/title_resource"
+            app:showAsAction="ifRoom"
+            />
 
-    <item
-        android:id="@+id/navigation_listen"
-        android:enabled="true"
-        android:icon="@drawable/ic_cross_24dp"
-        android:title="@string/title_listen"
-        app:showAsAction="ifRoom"
-        />
-
-    <item
-        android:id="@+id/navigation_friends"
-        android:enabled="true"
-        android:icon="@drawable/ic_supervisor_account_black_24dp"
-        android:title="@string/title_friends"
-        app:showAsAction="ifRoom"
-        />
+        <!---->
+        <!--<item-->
+            <!--android:id="@+id/navigation_listen"-->
+            <!--android:enabled="true"-->
+            <!--android:icon="@drawable/ic_cross_24dp"-->
+            <!--android:title="@string/title_contribute"-->
+            <!--app:showAsAction="ifRoom"-->
+            <!--/>-->
+    </group>
 </menu>

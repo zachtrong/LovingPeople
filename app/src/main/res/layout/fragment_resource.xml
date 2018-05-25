@@ -3,7 +3,7 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <TextView
-        android:text="FRIENDS"
+        android:text="RESOURCE"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

@@ -78,13 +78,6 @@ public class WelcomeActivity extends BaseActivity {
         isSignIn = !isSignIn;
     }
 
-    private User getUserDataFromView() {
-        User user = new User();
-        user.setUsername(usernameEditText.getText().toString());
-        user.setPassword(passwordEditText.getText().toString());
-        return user;
-    }
-
     private void getCredential(boolean isSignIn) {
         User user = getUserDataFromView();
         InputChecker inputChecker = getInputChecker(user);
@@ -94,6 +87,13 @@ public class WelcomeActivity extends BaseActivity {
         } else {
             checkCredential(user.getUsername(), user.getPassword(), isSignIn);
         }
+    }
+
+    private User getUserDataFromView() {
+        User user = new User();
+        user.setUsername(usernameEditText.getText().toString());
+        user.setPassword(passwordEditText.getText().toString());
+        return user;
     }
 
     private InputChecker getInputChecker(User user) {
@@ -172,9 +172,7 @@ public class WelcomeActivity extends BaseActivity {
 
         @Override
         public void onError(@NonNull ObjectServerError error) {
-            runOnUiThread(() -> {
-                buttonLoading.setProgress(-1);
-            });
+            runOnUiThread(() -> buttonLoading.setProgress(-1));
         }
     };
 

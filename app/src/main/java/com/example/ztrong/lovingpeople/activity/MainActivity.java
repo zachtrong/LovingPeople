@@ -1,121 +1,117 @@
 package com.example.ztrong.lovingpeople.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.example.ztrong.lovingpeople.R;
-import com.example.ztrong.lovingpeople.R2;
-import com.example.ztrong.lovingpeople.fragment.FriendFragment;
 import com.example.ztrong.lovingpeople.fragment.HomeFragment;
-import com.example.ztrong.lovingpeople.fragment.ListenFragment;
-import com.example.ztrong.lovingpeople.fragment.ShareFragment;
-import com.example.ztrong.lovingpeople.service.messenger.Constant;
-import com.example.ztrong.lovingpeople.service.model.User;
+import com.example.ztrong.lovingpeople.fragment.MessageFragment;
+import com.example.ztrong.lovingpeople.fragment.ResourceFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.ObjectServerError;
 import io.realm.Realm;
-import io.realm.RealmResults;
-import io.realm.Sort;
-import io.realm.SyncConfiguration;
-import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity
+		implements NavigationView.OnNavigationItemSelectedListener {
 
-    private final static String TAG = "Main";
+	private static final int DELAY_CLOSE_DRAWER_MS = 300;
 
-    @BindView(R.id.nav_main)
-    BottomNavigationView navigation;
+	@BindView(R.id.fl_main)
+	FrameLayout frameLayout;
+	@BindView(R.id.nav_view)
+	NavigationView navigationView;
+	@BindView(R.id.drawer_layout)
+	DrawerLayout drawerLayout;
 
-    @BindView(R.id.fl_main)
-    FrameLayout frameLayout;
+	Realm realm;
 
-    @BindView(R.id.tb_main)
-    Toolbar toolbar;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		setUpData();
+		setUpView();
+	}
 
-    Realm realm;
+	private void setUpData() {
+		realm = Realm.getDefaultInstance();
+	}
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = item -> {
+	private void setUpView() {
+		ButterKnife.bind(this);
+		navigationView.setNavigationItemSelectedListener(this);
+		onNavigationItemSelected(navigationView.getMenu().findItem(R.id.navigation_home));
+	}
 
-        Fragment mFragment = null;
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		realm.close();
+	}
 
-        switch (item.getItemId()) {
-            case R.id.navigation_home:
-                mFragment = HomeFragment.getInstance();
-                break;
-            case R.id.navigation_share:
-                mFragment = ShareFragment.getInstance();
-                break;
-            case R.id.navigation_listen:
-                mFragment = ListenFragment.getInstance();
-                break;
-            case R.id.navigation_friends:
-                mFragment = FriendFragment.getInstance();
-                break;
-        }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_items, menu);
+		return true;
+	}
 
-        if (mFragment == null) {
-            return false;
-        }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.action_logout) {
+			SyncUser syncUser = SyncUser.current();
+			if (syncUser != null) {
+				syncUser.logOut();
+				Intent intent = new Intent(this, WelcomeActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+				startActivity(intent);
+			}
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fl_main, mFragment)
-                .commit();
+	@Override
+	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+		startFragment(item);
+		closeDrawerWithDelay();
+		return true;
+	}
 
-        return true;
-    };
+	private void startFragment(@NonNull MenuItem item) {
+		Fragment fragment = getFragmentFromId(item.getItemId());
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.fl_main, fragment)
+				.commit();
+	}
 
-        setSupportActionBar(toolbar);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        navigation.setSelectedItemId(R.id.navigation_home);
+	private void closeDrawerWithDelay() {
+		final Handler handler = new Handler();
+		handler.postDelayed(() -> drawerLayout.closeDrawers(), DELAY_CLOSE_DRAWER_MS);
+	}
 
-        realm = Realm.getDefaultInstance();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        realm.close();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_items, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_logout) {
-            SyncUser syncUser = SyncUser.current();
-            if (syncUser != null) {
-                syncUser.logOut();
-                Intent intent = new Intent(this, WelcomeActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+	Fragment getFragmentFromId(int id) {
+		switch (id) {
+			case R.id.navigation_home:
+				return HomeFragment.getInstance();
+			case R.id.navigation_message:
+				return MessageFragment.getInstance();
+			case R.id.navigation_resource:
+				return ResourceFragment.getInstance();
+			default:
+				return HomeFragment.getInstance();
+		}
+	}
 }

@@ -9,17 +9,17 @@ import android.view.ViewGroup;
 
 import com.example.ztrong.lovingpeople.R;
 
-public class FriendFragment extends BaseFragment {
-    // TODO: FriendFragment
-    private static FriendFragment friendFragment = new FriendFragment();
-    public static FriendFragment getInstance() {
-        return friendFragment;
+public class ResourceFragment extends BaseFragment {
+    // TODO: ResourceFragment
+    private static ResourceFragment resourceFragment = new ResourceFragment();
+    public static ResourceFragment getInstance() {
+        return resourceFragment;
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_friend, container, false);
+        return inflater.inflate(R.layout.fragment_resource, container, false);
     }
 
     @Override

@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import com.example.ztrong.lovingpeople.R;
 import com.example.ztrong.lovingpeople.service.common.model.Dialog;
+import com.example.ztrong.lovingpeople.service.persistence.DialogData;
+import com.example.ztrong.lovingpeople.service.utils.AppUtils;
 import com.squareup.picasso.Picasso;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.dialogs.DialogsList;
@@ -23,15 +25,15 @@ import butterknife.ButterKnife;
 public class MessageFragment extends BaseFragment
 		implements DialogsListAdapter.OnDialogClickListener<Dialog>,
 		DialogsListAdapter.OnDialogLongClickListener<Dialog> {
+
 	// TODO: MessageFragment
 	@BindView(R.id.tb_message)
 	Toolbar toolbar;
 	@BindView(R.id.dl_message)
-	private DialogsList dialogsList;
+	DialogsList dialogsList;
 
 	private ImageLoader imageLoader;
 	private DialogsListAdapter<Dialog> dialogsAdapter;
-	private ArrayList<Dialog> dialogs;
 
 	@Nullable
 	@Override
@@ -56,16 +58,21 @@ public class MessageFragment extends BaseFragment
 
 	private void initAdapter() {
 		dialogsAdapter = new DialogsListAdapter<>(imageLoader);
-		dialogsAdapter.setItems(Dialogs)
+		dialogsAdapter.setItems(DialogData.getDialogs());
+
+		dialogsAdapter.setOnDialogClickListener(this);
+		dialogsAdapter.setOnDialogLongClickListener(this);
+
+		dialogsList.setAdapter(dialogsAdapter);
 	}
 
 	@Override
 	public void onDialogClick(Dialog dialog) {
-
+		AppUtils.showToast(this.getContext(), "onClick", false);
 	}
 
 	@Override
 	public void onDialogLongClick(Dialog dialog) {
-
+		AppUtils.showToast(this.getContext(), "onLongClick", false);
 	}
 }

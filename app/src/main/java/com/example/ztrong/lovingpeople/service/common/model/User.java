@@ -7,9 +7,9 @@ public class User implements IUser {
 	private String id;
 	private String name;
 	private String avatar;
-	private Status status;
+	private String status;
 
-	public User(String id, String name, String avatar, Status status) {
+	public User(String id, String name, String avatar, String status) {
 		this.id = id;
 		this.name = name;
 		this.avatar = avatar;
@@ -31,7 +31,7 @@ public class User implements IUser {
 		return avatar;
 	}
 
-	public Status getStatus() {
+	public String getStatus() {
 		return status;
 	}
 }

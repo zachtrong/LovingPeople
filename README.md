@@ -1,2 +1,2 @@
-# connecting-students
-e-ICON 2018
+# LovingPeople 
+Educational Application for a better world

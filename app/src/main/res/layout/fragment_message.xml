@@ -18,6 +18,8 @@
 
     <com.stfalcon.chatkit.dialogs.DialogsList
         android:id="@+id/dl_message"
+        app:dialogUnreadItemBackground="@color/grey_transparent"
+        app:dialogUnreadTitleTextStyle="bold"
         android:layout_below="@id/tb_message"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

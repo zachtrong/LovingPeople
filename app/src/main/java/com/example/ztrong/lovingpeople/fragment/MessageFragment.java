@@ -57,7 +57,7 @@ public class MessageFragment extends BaseFragment
 	}
 
 	private void initAdapter() {
-		dialogsAdapter = new DialogsListAdapter<>(imageLoader);
+		dialogsAdapter = new DialogsListAdapter<>(R.layout.item_dialog, imageLoader);
 		dialogsAdapter.setItems(DialogData.getDialogs());
 
 		dialogsAdapter.setOnDialogClickListener(this);
@@ -68,11 +68,13 @@ public class MessageFragment extends BaseFragment
 
 	@Override
 	public void onDialogClick(Dialog dialog) {
+		// TODO onClick
 		AppUtils.showToast(this.getContext(), "onClick", false);
 	}
 
 	@Override
 	public void onDialogLongClick(Dialog dialog) {
+		// TODO onLongClick
 		AppUtils.showToast(this.getContext(), "onLongClick", false);
 	}
 }

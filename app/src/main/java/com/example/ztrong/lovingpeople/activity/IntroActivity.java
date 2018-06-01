@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.example.ztrong.lovingpeople.R;
 import com.example.ztrong.lovingpeople.fragmentintro.FirstSlide;
 import com.example.ztrong.lovingpeople.fragmentintro.FourthSlide;
 import com.example.ztrong.lovingpeople.fragmentintro.SecondSlide;
@@ -37,7 +39,7 @@ public class IntroActivity extends MaterialIntroActivity {
 
 	@Override
 	public void onFinish() {
-		MainActivity.open(this);
+		//MainActivity.open(this);
 		super.onFinish();
 	}
 }

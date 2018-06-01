@@ -19,7 +19,7 @@ public class SecondSlide extends SlideFragment {
 
 	@Override
 	public int backgroundColor() {
-		return R.color.intro_grey;
+		return R.color.intro2;
 	}
 
 	@Override

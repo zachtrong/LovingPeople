@@ -26,8 +26,9 @@
     <color name="red">#e94f4f</color>
     <color name="brown">#4e342e</color>
 
-    <color name="intro_yellow">#DAB89A</color>
-    <color name="intro_grey">#97b6af</color>
-    <color name="intro_green">#6FD3BD</color>
-    <color name="intro_red">#E76A5C</color>
+    <color name="intro1">#e66759</color>
+    <color name="intro2">#2E282A</color>
+    <!--#92a4b6-->
+    <color name="intro3">#00AA79</color>
+    <color name="intro4">#E18335</color>
 </resources>

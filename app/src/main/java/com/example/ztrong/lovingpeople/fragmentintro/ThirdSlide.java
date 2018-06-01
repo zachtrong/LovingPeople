@@ -19,7 +19,7 @@ public class ThirdSlide extends SlideFragment {
 
 	@Override
 	public int backgroundColor() {
-		return R.color.intro_green;
+		return R.color.intro3;
 	}
 
 	@Override

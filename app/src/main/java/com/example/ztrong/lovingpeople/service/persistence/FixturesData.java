@@ -15,6 +15,42 @@ abstract class FixturesData {
 
 	static SecureRandom rnd = new SecureRandom();
 
+	static ArrayList<String> homePostContentData = new ArrayList<String>() {
+		{
+			add("Depression distorts your thinking. When you are depressed, your mind can play tricks on you. If you have thoughts of suicide, please call someone immediately. Don't let a temporary glitch in your thinking cause you to harm yourself or another.");
+			add("Depression makes it hard to give. It's very hard to think of other people when you're wrapped in a prickly blanket of sadness, and all you can think about is your own pain. Be proactive and just a few steps you need to heal. Try reading a book to help you understand what you are going through and how best to deal with it.");
+			add("Depression is experienced as anxiety 65 percent of the time. Make sure you get an accurate diagnosis, so you can get the most effective treatment available. There is a saying in psychotherapy, \"No pills without skills.\" If you are taking medication you should also be getting therapy.");
+			add("Persistent irritability can be a symptom of depression. If the world, your life, or your loved ones constantly tick you off, the cause might be something that's going on inside of you. That anger can lead to lashing out or withdrawing from those who love you. Neither one will get you what you need.");
+			add("Chronic pain can be another symptom of depression. At the same time, being in continual discomfort can cause you to become depressed. When you are depressed and in pain, it can be hard to know which came first.");
+			add("Alcohol is a depressant. So are marijuana and a host of other recreational or street drugs. Self-medication is not going to get you better and will surely make you worse over time. Remember that all medications, including anti-depressants, have side effects.");
+			add("People don't choose to be depressed, but they do make a choice about how to deal with it. You can choose to do nothing, but denying that you have a problem will only make you feel worse. Choose to just make one step, just one and if it feels okay, try it again. That's how many people get through it.");
+			add("The origin of depression can be situational and/or bio-chemical. If you are experiencing mild to moderate situational depression (resulting from the loss of a job, for example), counseling will help you. Most bio-chemical depressions that are moderate to severe are best treated with a combination of medicine and psychotherapy.");
+			add("Depression can be as hard on your loved ones as it is on you. Those closest to you may start to feel unloved, and may distance themselves so they aren't pulled into your pain. Remember that others are counting on you");
+			add("Exercise is the easiest and least expensive cure for depression. Just walking 30 minutes a day will help you and sometimes completely alleviate your symptoms. For this very reason, many therapists take walks with clients instead of doing \"couch time.\"");
+		}
+	};
+
+	static ArrayList<String> colors = new ArrayList<String>() {
+		{
+			add("#f44336");
+			add("#E91E63");
+			add("#9C27B0");
+			add("#673AB7");
+			add("#3F51B5");
+			add("#2196F3");
+			add("#03A9F4");
+			add("#00BCD4");
+			add("#009688");
+			add("#4CAF50");
+			add("#8BC34A");
+			add("#FFC107");
+			add("#FF9800");
+			add("#FF5722");
+			add("#795548");
+			add("#607D8B");
+		}
+	};
+
 	static ArrayList<String> avatars = new ArrayList<String>() {
 		{
 			add("http://i.imgur.com/pv1tBmT.png");
@@ -117,5 +153,13 @@ abstract class FixturesData {
 
 	static String getRandomStatus() {
 		return status.get(rnd.nextInt(status.size()));
+	}
+
+	static String getRandomHomeContent() {
+		return homePostContentData.get(rnd.nextInt(homePostContentData.size()));
+	}
+
+	static String getRandomColor() {
+		return colors.get(rnd.nextInt(colors.size()));
 	}
 }

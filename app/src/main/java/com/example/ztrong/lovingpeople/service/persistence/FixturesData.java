@@ -4,6 +4,10 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import static com.example.ztrong.lovingpeople.service.messenger.Constant.USER_BUSY;
+import static com.example.ztrong.lovingpeople.service.messenger.Constant.USER_OFFLINE;
+import static com.example.ztrong.lovingpeople.service.messenger.Constant.USER_ONLINE;
+
 /*
  * Created by Anton Bevza on 1/13/17.
  */
@@ -77,9 +81,9 @@ abstract class FixturesData {
 
 	static final ArrayList<String> status = new ArrayList<String>() {
 		{
-			add("Offline");
-			add("Busy");
-			add("Online");
+			add(USER_OFFLINE);
+			add(USER_BUSY);
+			add(USER_ONLINE);
 		}
 	};
 

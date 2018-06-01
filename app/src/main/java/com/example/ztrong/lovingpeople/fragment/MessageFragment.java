@@ -3,12 +3,17 @@ package com.example.ztrong.lovingpeople.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.ztrong.lovingpeople.R;
+import com.example.ztrong.lovingpeople.activity.ConversationActivity;
+import com.example.ztrong.lovingpeople.adapter.holder.MessageDialogViewHolder;
 import com.example.ztrong.lovingpeople.service.common.model.Dialog;
 import com.example.ztrong.lovingpeople.service.persistence.DialogData;
 import com.example.ztrong.lovingpeople.service.utils.AppUtils;
@@ -16,8 +21,6 @@ import com.squareup.picasso.Picasso;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.dialogs.DialogsList;
 import com.stfalcon.chatkit.dialogs.DialogsListAdapter;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,9 +50,21 @@ public class MessageFragment extends BaseFragment
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
-		setUpToolbar(toolbar);
+		super.setUpToolbar(toolbar);
 		setUpImageLoader();
 		initAdapter();
+	}
+
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_message, menu);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	private void setUpImageLoader() {
@@ -57,7 +72,10 @@ public class MessageFragment extends BaseFragment
 	}
 
 	private void initAdapter() {
-		dialogsAdapter = new DialogsListAdapter<>(R.layout.item_dialog, imageLoader);
+		dialogsAdapter = new DialogsListAdapter<>(
+				R.layout.item_dialog,
+				MessageDialogViewHolder.class,
+				imageLoader);
 		dialogsAdapter.setItems(DialogData.getDialogs());
 
 		dialogsAdapter.setOnDialogClickListener(this);
@@ -68,8 +86,7 @@ public class MessageFragment extends BaseFragment
 
 	@Override
 	public void onDialogClick(Dialog dialog) {
-		// TODO onClick
-		AppUtils.showToast(this.getContext(), "onClick", false);
+		ConversationActivity.open(getContext());
 	}
 
 	@Override

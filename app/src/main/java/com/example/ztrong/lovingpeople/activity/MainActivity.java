@@ -6,8 +6,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -65,7 +63,7 @@ public class MainActivity extends BaseActivity
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_items, menu);
+		getMenuInflater().inflate(R.menu.menu_home, menu);
 		return true;
 	}
 
@@ -88,7 +86,7 @@ public class MainActivity extends BaseActivity
 	public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 		startFragment(item);
 		closeDrawerWithDelay();
-		return true;
+		return false;
 	}
 
 	private void startFragment(@NonNull MenuItem item) {

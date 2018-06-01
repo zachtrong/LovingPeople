@@ -26,8 +26,8 @@
             android:name=".activity.MainActivity"
             android:label="@string/app_name">
         </activity>
-        <activity android:name=".activity.WelcomeActivity"
-            />
+        <activity android:name=".activity.WelcomeActivity" />
+        <activity android:name=".activity.ConversationActivity"/>
     </application>
 
 </manifest>

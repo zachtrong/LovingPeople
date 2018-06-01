@@ -1,6 +1,4 @@
 package com.example.ztrong.lovingpeople.service.common.model;
-
-import com.example.ztrong.lovingpeople.service.common.Status;
 import com.stfalcon.chatkit.commons.models.IUser;
 
 public class User implements IUser {

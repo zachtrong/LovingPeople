@@ -15,7 +15,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomeFragment extends BaseFragment {
-	// TODO: HomeFragment
 
 	@BindView(R.id.tb_home)
 	Toolbar toolbar;

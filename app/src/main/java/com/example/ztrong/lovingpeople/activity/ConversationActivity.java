@@ -12,7 +12,7 @@ import com.example.ztrong.lovingpeople.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ConversationActivity extends BaseActivity {
+public class ConversationActivity extends AppCompatActivity {
 
 	@BindView(R.id.tb_conversation)
 	Toolbar toolbar;
@@ -34,5 +34,11 @@ public class ConversationActivity extends BaseActivity {
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
+	}
+
+	@Override
+	public boolean onSupportNavigateUp() {
+		onBackPressed();
+		return true;
 	}
 }

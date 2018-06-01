@@ -1,5 +1,6 @@
 package com.example.ztrong.lovingpeople.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,6 +37,10 @@ public class MainActivity extends BaseActivity
 	DrawerLayout drawerLayout;
 
 	Realm realm;
+
+	public static void open(Context context) {
+		context.startActivity(new Intent(context, MainActivity.class));
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

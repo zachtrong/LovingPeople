@@ -25,4 +25,9 @@
     <color name="green_dark">#2da346</color>
     <color name="red">#e94f4f</color>
     <color name="brown">#4e342e</color>
+
+    <color name="intro_yellow">#DAB89A</color>
+    <color name="intro_grey">#97b6af</color>
+    <color name="intro_green">#6FD3BD</color>
+    <color name="intro_red">#E76A5C</color>
 </resources>

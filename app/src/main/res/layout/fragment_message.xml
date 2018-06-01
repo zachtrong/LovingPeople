@@ -24,6 +24,5 @@
         android:layout_height="match_parent"
         android:id="@+id/dl_message"
         app:dialogUnreadItemBackground="@color/grey_transparent"
-        app:dialogUnreadTitleTextStyle="bold"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:dialogUnreadTitleTextStyle="bold"/>
 </LinearLayout>

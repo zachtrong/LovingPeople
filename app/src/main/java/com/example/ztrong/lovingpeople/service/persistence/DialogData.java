@@ -7,6 +7,7 @@ import com.example.ztrong.lovingpeople.service.common.model.User;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 
 import static com.example.ztrong.lovingpeople.service.persistence.FixturesData.getRandomAvatar;

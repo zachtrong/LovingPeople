@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import com.example.ztrong.lovingpeople.R;
 import com.example.ztrong.lovingpeople.fragment.HomeFragment;
 import com.example.ztrong.lovingpeople.fragment.MessageFragment;
+import com.example.ztrong.lovingpeople.fragment.ProfileFragment;
 import com.example.ztrong.lovingpeople.fragment.ResourceFragment;
 
 import butterknife.BindView;
@@ -115,6 +116,8 @@ public class MainActivity extends BaseActivity
 				return new MessageFragment();
 			case R.id.navigation_resource:
 				return new ResourceFragment();
+			case R.id.navigation_profile:
+				return new ProfileFragment();
 			default:
 				return new HomeFragment();
 		}
@@ -125,7 +128,7 @@ public class MainActivity extends BaseActivity
 				this,
 				drawerLayout,
 				toolbar,
-				R.string.navigation_drawer_close,
+				R.string.navigation_drawer_open,
 				R.string.navigation_drawer_close
 		);
 		drawerLayout.addDrawerListener(toggle);

@@ -3,7 +3,7 @@
     package="com.example.ztrong.lovingpeople">
 
     <application
-        android:name=".activity.LovingPeopleApplication"
+        android:name=".LovingPeopleApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher_round"

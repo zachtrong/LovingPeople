@@ -1,4 +1,4 @@
-package com.example.ztrong.lovingpeople.activity;
+package com.example.ztrong.lovingpeople;
 
 import android.app.Application;
 

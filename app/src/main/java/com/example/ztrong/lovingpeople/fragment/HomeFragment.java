@@ -18,10 +18,18 @@ import android.view.animation.DecelerateInterpolator;
 
 import com.example.ztrong.lovingpeople.R;
 import com.example.ztrong.lovingpeople.adapter.HomePostsListAdapter;
+import com.example.ztrong.lovingpeople.service.common.model.HomeItem;
+import com.example.ztrong.lovingpeople.service.persistence.HomePostsData;
 import com.example.ztrong.lovingpeople.service.utils.AppUtils;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
+import io.realm.SyncConfiguration;
 
 public class HomeFragment extends BaseFragment {
 
@@ -31,7 +39,8 @@ public class HomeFragment extends BaseFragment {
 	RecyclerView recyclerView;
 
 	RecyclerView.LayoutManager layoutManager;
-	HomePostsListAdapter adapter;
+
+	Realm realm;
 
 	@Nullable
 	@Override
@@ -44,14 +53,39 @@ public class HomeFragment extends BaseFragment {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
 		setUpToolbar(toolbar);
-
 		setUpRecyclerView();
 	}
 
 	private void setUpRecyclerView() {
+		RealmResults<HomeItem> items = setUpRealm();
+		HomePostsListAdapter homePostsListAdapter = new HomePostsListAdapter(items);
+
 		layoutManager = new LinearLayoutManager(getContext());
 		recyclerView.setLayoutManager(layoutManager);
-		adapter = HomePostsListAdapter.getAdapter();
-		recyclerView.setAdapter(adapter);
+		recyclerView.setAdapter(homePostsListAdapter);
+
+		/*
+		realm.executeTransaction(realm -> {
+			ArrayList<String> data = HomePostsData.getHomePosts();
+			for (int i = 0; i < 20; ++i)
+				realm.insert(new HomeItem(String.valueOf(i), data.get(i)));
+		});
+		*/
+	}
+
+	private RealmResults<HomeItem> setUpRealm() {
+		Realm.setDefaultConfiguration(SyncConfiguration.automatic());
+		realm = Realm.getDefaultInstance();
+
+		return realm
+				.where(HomeItem.class)
+				.sort("timestamp", Sort.DESCENDING)
+				.findAllAsync();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		realm.close();
 	}
 }

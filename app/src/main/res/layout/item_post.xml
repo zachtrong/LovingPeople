@@ -1,71 +1,89 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
-        card_view:cardCornerRadius="4dp"
-        card_view:cardElevation="2dp"
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/main_card_margin_vertical"
+        android:layout_marginStart="@dimen/main_card_margin_horizontal"
+        android:layout_marginEnd="@dimen/main_card_margin_horizontal"
+        android:layout_marginTop="@dimen/main_card_margin_vertical"
+        android:background="?attr/selectableItemBackground"
         android:foreground="?attr/selectableItemBackground"
         android:clickable="true"
-        android:layout_margin="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        card_view:cardCornerRadius="@dimen/card_recycler_corner_radius"
+        card_view:cardElevation="@dimen/card_recycler_elevation">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <FrameLayout
-                android:id="@+id/fl_background"
-                android:background="@color/grey"
+                android:id="@+id/background_layout"
                 android:layout_width="match_parent"
-                android:minHeight="200dp"
                 android:layout_height="wrap_content">
 
+                <!--<ImageView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:minHeight="200dp"-->
+                    <!--android:adjustViewBounds="true"-->
+                    <!--android:scaleType="centerCrop" />-->
+
                 <TextView
-                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
                     android:id="@+id/tv_content"
                     android:fontFamily="@font/lato_black"
-                    android:textColor="#fff"
                     android:textSize="20sp"
-                    android:padding="10dp"
-                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_margin="@dimen/card_title_margin"
+                    android:textColor="@color/white" />
             </FrameLayout>
 
             <RelativeLayout
-                android:padding="14dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/background_layout"
+                android:padding="@dimen/card_button_margin">
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/ib_item_post"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/transparent"
-                    android:src="@drawable/ic_heart_outline_grey600_24dp" />
+                    android:layout_alignParentStart="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/heart_outline" />
 
                 <TextView
-                    android:layout_toEndOf="@id/ib_item_post"
                     android:id="@+id/tv_like"
-                    android:paddingStart="3dp"
-                    android:text="10 likes"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toEndOf="@id/ib_item_post"
+                    android:clickable="true"
+                    android:paddingTop="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <ImageButton
-                    android:src="@drawable/ic_share_variant_grey600_24dp"
-                    android:layout_alignParentEnd="true"
-                    android:background="@color/transparent"
+                <ImageView
+                    android:id="@+id/img_main_card2_share"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_share_variant_grey600_24dp" />
+
             </RelativeLayout>
-        </LinearLayout>
+
+        </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

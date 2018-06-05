@@ -9,9 +9,9 @@ import com.stfalcon.chatkit.dialogs.DialogsListAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static net.ddns.zimportant.lovingpeople.service.messenger.Constant.USER_BUSY;
-import static net.ddns.zimportant.lovingpeople.service.messenger.Constant.USER_OFFLINE;
-import static net.ddns.zimportant.lovingpeople.service.messenger.Constant.USER_ONLINE;
+import static net.ddns.zimportant.lovingpeople.service.Constant.USER_BUSY;
+import static net.ddns.zimportant.lovingpeople.service.Constant.USER_OFFLINE;
+import static net.ddns.zimportant.lovingpeople.service.Constant.USER_ONLINE;
 
 public class MessageDialogViewHolder extends DialogsListAdapter.DialogViewHolder<Dialog> {
 

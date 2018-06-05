@@ -1,24 +1,12 @@
 package net.ddns.zimportant.lovingpeople.activity;
 
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.PowerManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Window;
-import android.view.WindowManager;
 
-import net.ddns.zimportant.lovingpeople.R;
-import net.ddns.zimportant.lovingpeople.service.messenger.Constant;
+import net.ddns.zimportant.lovingpeople.service.Constant;
 import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import io.realm.ObjectServerError;
-import io.realm.Realm;
-import io.realm.RealmAsyncTask;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
@@ -27,10 +15,10 @@ public class SplashScreenActivity extends BaseActivity {
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// TODO test
 		if (SyncUser.current() != null) {
 			MainActivity.open(this);
 		} else {
+			WelcomeActivity.open(this);
 			SyncCredentials credentials = SyncCredentials.nickname("user", false);
 			SyncUser.logInAsync(credentials, Constant.AUTH_URL, new SyncUser.Callback<SyncUser>() {
 				@Override

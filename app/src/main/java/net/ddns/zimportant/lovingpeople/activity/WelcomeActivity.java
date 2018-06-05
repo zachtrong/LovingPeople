@@ -1,8 +1,8 @@
 package net.ddns.zimportant.lovingpeople.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -23,7 +23,7 @@ import io.realm.ObjectServerError;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
-import static net.ddns.zimportant.lovingpeople.service.messenger.Constant.AUTH_URL;
+import static net.ddns.zimportant.lovingpeople.service.Constant.AUTH_URL;
 
 public class WelcomeActivity extends BaseActivity {
 
@@ -54,6 +54,10 @@ public class WelcomeActivity extends BaseActivity {
 	boolean isSignIn = true;
 	ActionProcessButton buttonLoading;
 
+	public static void open(Context context) {
+		context.startActivity(new Intent(context, WelcomeActivity.class));
+	}
+
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,16 +65,36 @@ public class WelcomeActivity extends BaseActivity {
 
 		ButterKnife.bind(this);
 
-        /*
         signUpButton.setOnClickListener(signUpOnClickListener);
         signInBackButton.setOnClickListener(signInBackListener);
         signInButton.setOnClickListener(signInListener);
         signInButton.setMode(ActionProcessButton.Mode.ENDLESS);
         signUpButton.setMode(ActionProcessButton.Mode.ENDLESS);
-        */
 	}
 
-	/*
+	private View.OnClickListener signUpOnClickListener = v -> {
+		if (isSignIn) {
+			changeViewGoneOrVisible();
+		} else {
+			getCredential(isSignIn);
+		}
+	};
+
+	private View.OnClickListener signInBackListener = v -> {
+		if (!isSignIn) {
+			changeViewGoneOrVisible();
+		} else {
+			getCredential(isSignIn);
+		}
+	};
+
+	private View.OnClickListener signInListener = v -> {
+		if (isSignIn) {
+			getCredential(isSignIn);
+		}
+	};
+
+
 	private void changeViewGoneOrVisible() {
 		TransitionManager.beginDelayedTransition(transitionsContainer);
 		signInButton.setVisibility(isSignIn ? View.GONE : View.VISIBLE);
@@ -81,24 +105,24 @@ public class WelcomeActivity extends BaseActivity {
 	}
 
 	private void getCredential(boolean isSignIn) {
-		User user = getUserDataFromView();
-		InputChecker inputChecker = getInputChecker(user);
+		UserData user = getUserDataFromView();
+		InputChecker inputChecker = getFailInputChecker(user);
 
-		if (inputChecker.isCancel()) {
+		if (inputChecker != null && inputChecker.isCancel()) {
 			inputChecker.getFocusView().requestFocus();
 		} else {
 			checkCredential(user.getUsername(), user.getPassword(), isSignIn);
 		}
 	}
 
-	private User getUserDataFromView() {
-		User user = new User();
-		user.setUsername(usernameEditText.getText().toString());
-		user.setPassword(passwordEditText.getText().toString());
-		return user;
+	private UserData getUserDataFromView() {
+		return new UserData(
+				usernameEditText.getText().toString(),
+				passwordEditText.getText().toString()
+		);
 	}
 
-	private InputChecker getInputChecker(User user) {
+	private InputChecker getFailInputChecker(UserData user) {
 		InputChecker inputChecker = null;
 		InputChecker currentChecker;
 		currentChecker = checkPasswordConfirm(user, passwordConfirmEditText);
@@ -107,11 +131,10 @@ public class WelcomeActivity extends BaseActivity {
 		if (currentChecker != null) inputChecker = currentChecker;
 		currentChecker = checkUsername(user, usernameEditText);
 		if (currentChecker != null) inputChecker = currentChecker;
-		if (inputChecker == null) inputChecker = new InputChecker();
 		return inputChecker;
 	}
 
-	private InputChecker checkPasswordConfirm(User user, EditText passwordConfirmEditText) {
+	private InputChecker checkPasswordConfirm(UserData user, EditText passwordConfirmEditText) {
 		InputChecker inputChecker = null;
 		if (!isSignIn) {
 			String passwordConfirm = passwordConfirmEditText.getText().toString();
@@ -123,7 +146,7 @@ public class WelcomeActivity extends BaseActivity {
 		return inputChecker;
 	}
 
-	private InputChecker checkPassword(User user, EditText passwordEditText) {
+	private InputChecker checkPassword(UserData user, EditText passwordEditText) {
 		InputChecker inputChecker = null;
 		if (TextUtils.isEmpty(user.getPassword()) || !isPasswordValid(user.getPassword())) {
 			passwordEditText.setError(getString(R.string.error_invalid_password));
@@ -132,7 +155,7 @@ public class WelcomeActivity extends BaseActivity {
 		return inputChecker;
 	}
 
-	private InputChecker checkUsername(User user, EditText usernameEditText) {
+	private InputChecker checkUsername(UserData user, EditText usernameEditText) {
 		InputChecker inputChecker = null;
 		if (TextUtils.isEmpty(user.getUsername()) || !isUsernameValid(user.getUsername())) {
 			usernameEditText.setError(getString(R.string.error_invalid_username));
@@ -141,15 +164,14 @@ public class WelcomeActivity extends BaseActivity {
 		return inputChecker;
 	}
 
-	private void goToMainActivity() {
-		Intent intent = new Intent(this, MainActivity.class);
-		startActivity(intent);
-		finish();
-	}
-
 	private void checkCredential(String username, String password, boolean isSignIn) {
 		setButtonLoading(isSignIn ? signInButton : signUpButton);
 		doUserConnect(username, password, isSignIn);
+	}
+
+	private void setButtonLoading(ActionProcessButton button) {
+		buttonLoading = button;
+		buttonLoading.setProgress(1);
 	}
 
 	private void doUserConnect(String username, String password, boolean isSignIn) {
@@ -158,17 +180,12 @@ public class WelcomeActivity extends BaseActivity {
 		SyncUser.logInAsync(mCredentials, AUTH_URL, syncUserCallback);
 	}
 
-	private void setButtonLoading(ActionProcessButton button) {
-		buttonLoading = button;
-		buttonLoading.setProgress(1);
-	}
-
 	private SyncUser.Callback<SyncUser> syncUserCallback = new SyncUser.Callback<SyncUser>() {
 		@Override
 		public void onSuccess(@NonNull SyncUser result) {
 			runOnUiThread(() -> {
 				buttonLoading.setProgress(100);
-				goToMainActivity();
+				MainActivity.open(WelcomeActivity.this);
 			});
 		}
 
@@ -186,26 +203,29 @@ public class WelcomeActivity extends BaseActivity {
 		return password.length() <= 20;
 	}
 
-	private View.OnClickListener signInListener = v -> {
-		if (isSignIn) {
-			getCredential(isSignIn);
-		}
-	};
+	public class UserData {
+		private String username;
+		private String password;
 
-	private View.OnClickListener signUpOnClickListener = v -> {
-		if (isSignIn) {
-			changeViewGoneOrVisible();
-		} else {
-			getCredential(isSignIn);
+		UserData(String username, String password) {
+			this.username = username;
+			this.password = password;
 		}
-	};
 
-	private View.OnClickListener signInBackListener = v -> {
-		if (!isSignIn) {
-			changeViewGoneOrVisible();
-		} else {
-			getCredential(isSignIn);
+		String getUsername() {
+			return username;
 		}
-	};
-	*/
+
+		void setUsername(String username) {
+			this.username = username;
+		}
+
+		String getPassword() {
+			return password;
+		}
+
+		void setPassword(String password) {
+			this.password = password;
+		}
+	}
 }

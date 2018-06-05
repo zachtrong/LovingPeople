@@ -63,14 +63,6 @@ public class HomeFragment extends BaseFragment {
 		layoutManager = new LinearLayoutManager(getContext());
 		recyclerView.setLayoutManager(layoutManager);
 		recyclerView.setAdapter(homePostsListAdapter);
-
-		/*
-		realm.executeTransaction(realm -> {
-			ArrayList<String> data = HomePostsData.getHomePosts();
-			for (int i = 0; i < 20; ++i)
-				realm.insert(new HomeItem(String.valueOf(i), data.get(i)));
-		});
-		*/
 	}
 
 	private RealmResults<HomeItem> setUpRealm() {

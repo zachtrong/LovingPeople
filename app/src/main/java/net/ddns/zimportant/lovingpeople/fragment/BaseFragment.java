@@ -6,10 +6,6 @@ import android.support.v7.widget.Toolbar;
 
 import net.ddns.zimportant.lovingpeople.activity.MainActivity;
 
-/**
- * Singleton Pattern
- */
-
 public class BaseFragment extends Fragment {
 	MainActivity getMainActivity() {
 		return ((MainActivity) getContext());

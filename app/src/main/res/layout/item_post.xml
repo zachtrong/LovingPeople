@@ -27,13 +27,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!--<ImageView-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:minHeight="200dp"-->
-                    <!--android:adjustViewBounds="true"-->
-                    <!--android:scaleType="centerCrop" />-->
-
                 <TextView
                     android:id="@+id/tv_content"
                     android:fontFamily="@font/lato_black"
@@ -72,7 +65,7 @@
                     android:layout_height="wrap_content" />
 
                 <ImageView
-                    android:id="@+id/img_main_card2_share"
+                    android:id="@+id/iv_share_item_post"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"

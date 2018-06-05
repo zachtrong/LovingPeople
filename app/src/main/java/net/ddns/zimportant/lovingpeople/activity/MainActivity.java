@@ -28,7 +28,7 @@ import io.realm.SyncUser;
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
 
-	private static final int DELAY_CLOSE_DRAWER_MS = 300;
+	private static final int DELAY_CLOSE_DRAWER_MS = 100;
 
 	@BindView(R.id.fl_main)
 	FrameLayout frameLayout;

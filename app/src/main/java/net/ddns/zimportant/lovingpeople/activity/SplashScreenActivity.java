@@ -19,18 +19,6 @@ public class SplashScreenActivity extends BaseActivity {
 			MainActivity.open(this);
 		} else {
 			WelcomeActivity.open(this);
-			SyncCredentials credentials = SyncCredentials.nickname("user", false);
-			SyncUser.logInAsync(credentials, Constant.AUTH_URL, new SyncUser.Callback<SyncUser>() {
-				@Override
-				public void onSuccess(SyncUser result) {
-					MainActivity.open(SplashScreenActivity.this);
-				}
-
-				@Override
-				public void onError(ObjectServerError error) {
-					AppUtils.showToast(SplashScreenActivity.this, "FAIL", true);
-				}
-			});
 		}
 
 		/*

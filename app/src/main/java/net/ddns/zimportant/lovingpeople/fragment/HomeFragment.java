@@ -66,7 +66,6 @@ public class HomeFragment extends BaseFragment {
 	}
 
 	private RealmResults<HomeItem> setUpRealm() {
-		Realm.setDefaultConfiguration(SyncConfiguration.automatic());
 		realm = Realm.getDefaultInstance();
 
 		return realm

@@ -23,6 +23,7 @@ import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.SyncConfiguration;
 import io.realm.SyncUser;
 
 public class MainActivity extends BaseActivity
@@ -37,22 +38,20 @@ public class MainActivity extends BaseActivity
 	@BindView(R.id.drawer_layout)
 	DrawerLayout drawerLayout;
 
-	Realm realm;
-
 	public static void open(Context context) {
+		initRealm();
 		context.startActivity(new Intent(context, MainActivity.class));
+	}
+
+	private static void initRealm() {
+		Realm.setDefaultConfiguration(SyncConfiguration.automatic());
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		setUpData();
 		setUpView();
-	}
-
-	private void setUpData() {
-		realm = Realm.getDefaultInstance();
 	}
 
 	private void setUpView() {
@@ -64,7 +63,6 @@ public class MainActivity extends BaseActivity
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		realm.close();
 	}
 
 	@Override

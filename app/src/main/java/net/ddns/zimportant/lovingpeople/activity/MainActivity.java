@@ -39,12 +39,7 @@ public class MainActivity extends BaseActivity
 	DrawerLayout drawerLayout;
 
 	public static void open(Context context) {
-		initRealm();
 		context.startActivity(new Intent(context, MainActivity.class));
-	}
-
-	private static void initRealm() {
-		Realm.setDefaultConfiguration(SyncConfiguration.automatic());
 	}
 
 	@Override

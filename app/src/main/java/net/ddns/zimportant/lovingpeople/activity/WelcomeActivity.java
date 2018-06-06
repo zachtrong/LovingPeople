@@ -16,6 +16,7 @@ import android.widget.EditText;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import net.ddns.zimportant.lovingpeople.R;
+import net.ddns.zimportant.lovingpeople.service.Constant;
 import net.ddns.zimportant.lovingpeople.service.utils.InputChecker;
 
 import butterknife.BindView;
@@ -67,6 +68,7 @@ public class WelcomeActivity extends BaseActivity {
 		setContentView(R.layout.activity_welcome);
 
 		if (SyncUser.current() != null) {
+			setUpDefaultRealm();
 			MainActivity.open(this);
 			finish();
 		}
@@ -77,6 +79,16 @@ public class WelcomeActivity extends BaseActivity {
         signInButton.setOnClickListener(signInListener);
         signInButton.setMode(ActionProcessButton.Mode.ENDLESS);
         signUpButton.setMode(ActionProcessButton.Mode.ENDLESS);
+	}
+
+	private void setUpDefaultRealm() {
+		String instance_url = "realms://" + Constant.INSTANCE_ADDRESS + "/~/default";
+		SyncConfiguration configuration = new SyncConfiguration
+				.Builder(SyncUser.current(), instance_url)
+				.disableSSLVerification()
+				//.trustedRootCA("root_ca.pem")
+				.build();
+		Realm.setDefaultConfiguration(configuration);
 	}
 
 	private View.OnClickListener signUpOnClickListener = v -> {
@@ -192,6 +204,7 @@ public class WelcomeActivity extends BaseActivity {
 		public void onSuccess(@NonNull SyncUser result) {
 			runOnUiThread(() -> {
 				buttonLoading.setProgress(100);
+				setUpDefaultRealm();
 				MainActivity.open(WelcomeActivity.this);
 			});
 		}

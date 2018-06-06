@@ -1,13 +1,11 @@
 package net.ddns.zimportant.lovingpeople.service.persistence;
 
-import net.ddns.zimportant.lovingpeople.service.common.model.Dialog;
+import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.Message;
 import net.ddns.zimportant.lovingpeople.service.common.model.User;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 
 import static net.ddns.zimportant.lovingpeople.service.persistence.FixturesData.getRandomAvatar;
@@ -21,8 +19,8 @@ public class DialogData {
 		throw new AssertionError();
 	}
 
-	public static ArrayList<Dialog> getDialogs() {
-		ArrayList<Dialog> chats = new ArrayList<>();
+	public static ArrayList<ChatRoom> getDialogs() {
+		ArrayList<ChatRoom> chats = new ArrayList<>();
 		for (int i = 0; i < 20; ++i) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.add(Calendar.DAY_OF_MONTH, -(i * i));
@@ -33,15 +31,9 @@ public class DialogData {
 		return chats;
 	}
 
-	private static Dialog getDialog(int i, Date lastMessageCreatedAt) {
+	private static ChatRoom getDialog(int i, Date lastMessageCreatedAt) {
 		ArrayList<User> users = getUsers();
-		return new Dialog(
-				getRandomId(),
-				users.get(0).getName(),
-				getRandomAvatar(),
-				users,
-				getMessage(lastMessageCreatedAt),
-				i < 3 ? 3 - i : 0);
+		return null;
 	}
 
 	private static ArrayList<User> getUsers() {
@@ -56,18 +48,10 @@ public class DialogData {
 	}
 
 	private static User getUser() {
-		return new User(
-				getRandomId(),
-				getRandomName(),
-				getRandomAvatar(),
-				getRandomStatus());
+		return null;
 	}
 
 	private static Message getMessage(final Date date) {
-		return new Message(
-				getRandomId(),
-				getUser(),
-				getRandomMessage(),
-				date);
+		return null;
 	}
 }

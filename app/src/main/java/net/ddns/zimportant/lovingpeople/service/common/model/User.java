@@ -1,35 +1,63 @@
 package net.ddns.zimportant.lovingpeople.service.common.model;
 import com.stfalcon.chatkit.commons.models.IUser;
 
-public class User implements IUser {
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
+
+public class User extends RealmObject {
+	private static final String STORY_TELLER = "StoryTeller";
+	private static final String COUNSELOR = "Counselor";
+
+	@Required
+	@PrimaryKey
 	private String id;
+	@Required
 	private String name;
-	private String avatar;
+	@Required
+	private String avatarUrl;
+	@Required
 	private String status;
+	@Required
+	private String userType;
 
-	public User(String id, String name, String avatar, String status) {
-		this.id = id;
-		this.name = name;
-		this.avatar = avatar;
-		this.status = status;
-	}
-
-	@Override
 	public String getId() {
 		return id;
 	}
 
-	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
 
-	@Override
-	public String getAvatar() {
-		return avatar;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAvatarUrl() {
+		return avatarUrl;
+	}
+
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
 	}
 
 	public String getStatus() {
 		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 }

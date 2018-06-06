@@ -82,13 +82,7 @@ public class WelcomeActivity extends BaseActivity {
 	}
 
 	private void setUpDefaultRealm() {
-		String instance_url = "realms://" + Constant.INSTANCE_ADDRESS + "/~/default";
-		SyncConfiguration configuration = new SyncConfiguration
-				.Builder(SyncUser.current(), instance_url)
-				.disableSSLVerification()
-				//.trustedRootCA("root_ca.pem")
-				.build();
-		Realm.setDefaultConfiguration(configuration);
+		Realm.setDefaultConfiguration(SyncConfiguration.automatic());
 	}
 
 	private View.OnClickListener signUpOnClickListener = v -> {

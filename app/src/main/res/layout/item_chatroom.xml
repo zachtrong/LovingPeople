@@ -58,6 +58,7 @@
             android:layout_toStartOf="@+id/dialogUnreadBubble">
 
             <com.stfalcon.chatkit.utils.ShapeImageView
+                android:visibility="gone"
                 android:id="@id/dialogLastMessageUserAvatar"
                 android:layout_width="24dp"
                 android:layout_height="24dp"

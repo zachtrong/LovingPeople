@@ -17,30 +17,32 @@ import net.ddns.zimportant.lovingpeople.service.persistence.HomePostsData;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
+import io.realm.SyncUser;
 
-public class HomePostsListAdapter
-		extends RealmRecyclerViewAdapter<HomeItem, HomePostsListAdapter.ItemViewHolder> {
+public class HomePostsRecyclerAdapter
+		extends RealmRecyclerViewAdapter<HomeItem, HomePostsRecyclerAdapter.HomeItemViewHolder> {
 
-	public HomePostsListAdapter(OrderedRealmCollection<HomeItem> data) {
+	public HomePostsRecyclerAdapter(OrderedRealmCollection<HomeItem> data) {
 		super(data, true);
 	}
 
 	@NonNull
 	@Override
-	public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+	public HomeItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		View v = LayoutInflater.from(parent.getContext())
 				.inflate(R.layout.item_post, parent, false);
-		return new ItemViewHolder(v);
+		return new HomeItemViewHolder(v);
 	}
 
 	@Override
-	public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+	public void onBindViewHolder(@NonNull HomeItemViewHolder holder, int position) {
 		holder.setItem(getItem(position));
 		holder.setColor(position);
 	}
 
-	static class ItemViewHolder extends RecyclerView.ViewHolder {
+	static class HomeItemViewHolder extends RecyclerView.ViewHolder {
 		@BindView(R.id.background_layout)
 		View backgroundLayout;
 		@BindView(R.id.tv_content)
@@ -54,7 +56,7 @@ public class HomePostsListAdapter
 		private HomeItem item;
 		private AlphaAnimation alphaAnimationShowIcon;
 
-		ItemViewHolder(View itemView) {
+		HomeItemViewHolder(View itemView) {
 			super(itemView);
 			setUpLayout(itemView);
 		}
@@ -69,7 +71,6 @@ public class HomePostsListAdapter
 
 		View.OnClickListener onLikeClick = (View v) -> {
 			String itemId = this.item.getItemId();
-			boolean isLiked = this.item.getIsLiked();
 
 			this.item.getRealm().executeTransactionAsync(realm -> {
 				HomeItem item = realm
@@ -77,11 +78,22 @@ public class HomePostsListAdapter
 						.equalTo("itemId", itemId)
 						.findFirst();
 				if (item != null) {
-					item.setIsLiked(!isLiked);
-					item.setLikeCount(item.getLikeCount() + (isLiked ? -1 : 1));
+					if (isCurrentUserLiked(item)) {
+						item.getListLikeIdentity().remove(userIdentity());
+					} else {
+						item.getListLikeIdentity().add(userIdentity());
+					}
 				}
 			});
 		};
+
+		private boolean isCurrentUserLiked(HomeItem item) {
+			return item.getListLikeIdentity().contains(userIdentity());
+		}
+
+		private String userIdentity() {
+			return SyncUser.current().getIdentity();
+		}
 
 		View.OnClickListener onShareClick = (View v) -> {
 			Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -113,7 +125,7 @@ public class HomePostsListAdapter
 		}
 
 		private void updateLikeImage() {
-			if (item.getIsLiked()) {
+			if (isCurrentUserLiked(item)) {
 				likeButton.setImageResource(R.drawable.heart);
 			} else {
 				likeButton.setImageResource(R.drawable.heart_outline);

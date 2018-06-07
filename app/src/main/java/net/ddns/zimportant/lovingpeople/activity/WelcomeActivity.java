@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.transition.TransitionManager;
-import android.system.ErrnoException;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import android.widget.EditText;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import net.ddns.zimportant.lovingpeople.R;
-import net.ddns.zimportant.lovingpeople.service.Constant;
+import net.ddns.zimportant.lovingpeople.service.common.model.User;
 import net.ddns.zimportant.lovingpeople.service.utils.InputChecker;
 
 import butterknife.BindView;
@@ -28,6 +27,7 @@ import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.AUTH_URL;
+import static net.ddns.zimportant.lovingpeople.service.Constant.DEFAULT_REALM_URL;
 
 public class WelcomeActivity extends BaseActivity {
 
@@ -55,7 +55,8 @@ public class WelcomeActivity extends BaseActivity {
 	@BindView(R.id.root_welcome)
 	ViewGroup transitionsContainer;
 
-	boolean isSignIn = true;
+	boolean isSignInScreen = true;
+	boolean isLockSwitchScreen = false;
 	ActionProcessButton buttonLoading;
 
 	public static void open(Context context) {
@@ -66,7 +67,6 @@ public class WelcomeActivity extends BaseActivity {
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_welcome);
-
 		if (SyncUser.current() != null) {
 			setUpDefaultRealm();
 			MainActivity.open(this);
@@ -82,49 +82,61 @@ public class WelcomeActivity extends BaseActivity {
 	}
 
 	private void setUpDefaultRealm() {
-		Realm.setDefaultConfiguration(SyncConfiguration.automatic());
+		SyncConfiguration syncConfiguration =
+				new SyncConfiguration.Builder(SyncUser.current(), DEFAULT_REALM_URL)
+				.partialRealm()
+				.build();
+		Realm.setDefaultConfiguration(syncConfiguration);
 	}
 
 	private View.OnClickListener signUpOnClickListener = v -> {
-		if (isSignIn) {
-			changeViewGoneOrVisible();
-		} else {
-			getCredential(isSignIn);
+		if (!isLockSwitchScreen) {
+			if (isSignInScreen) {
+				changeViewGoneOrVisible();
+			} else {
+				getCredential();
+			}
 		}
 	};
 
 	private View.OnClickListener signInBackListener = v -> {
-		if (!isSignIn) {
-			changeViewGoneOrVisible();
-		} else {
-			getCredential(isSignIn);
+		if (!isLockSwitchScreen) {
+			if (!isSignInScreen) {
+				changeViewGoneOrVisible();
+			} else {
+				getCredential();
+			}
 		}
 	};
 
 	private View.OnClickListener signInListener = v -> {
-		if (isSignIn) {
-			getCredential(isSignIn);
+		if (!isLockSwitchScreen) {
+			if (isSignInScreen) {
+				getCredential();
+			}
 		}
 	};
 
 
 	private void changeViewGoneOrVisible() {
 		TransitionManager.beginDelayedTransition(transitionsContainer);
-		signInButton.setVisibility(isSignIn ? View.GONE : View.VISIBLE);
-		passwordConfirmTextInputLayout.setVisibility(isSignIn ? View.VISIBLE : View.GONE);
-		signInBackButton.setVisibility(isSignIn ? View.VISIBLE : View.GONE);
+		signInButton.setVisibility(isSignInScreen ? View.GONE : View.VISIBLE);
+		passwordConfirmTextInputLayout.setVisibility(isSignInScreen ? View.VISIBLE : View.GONE);
+		signInBackButton.setVisibility(isSignInScreen ? View.VISIBLE : View.GONE);
 
-		isSignIn = !isSignIn;
+		isSignInScreen = !isSignInScreen;
 	}
 
-	private void getCredential(boolean isSignIn) {
+	private void getCredential() {
+		isLockSwitchScreen = true;
 		UserData user = getUserDataFromView();
 		InputChecker inputChecker = getFailInputChecker(user);
 
 		if (inputChecker != null && inputChecker.isCancel()) {
 			inputChecker.getFocusView().requestFocus();
+			isLockSwitchScreen = false;
 		} else {
-			checkCredential(user.getUsername(), user.getPassword(), isSignIn);
+			checkCredential(user.getUsername(), user.getPassword());
 		}
 	}
 
@@ -149,7 +161,7 @@ public class WelcomeActivity extends BaseActivity {
 
 	private InputChecker checkPasswordConfirm(UserData user, EditText passwordConfirmEditText) {
 		InputChecker inputChecker = null;
-		if (!isSignIn) {
+		if (!isSignInScreen) {
 			String passwordConfirm = passwordConfirmEditText.getText().toString();
 			if (!user.getPassword().equals(passwordConfirm)) {
 				passwordConfirmEditText.setError(getString(R.string.error_invalid_matching));
@@ -177,9 +189,9 @@ public class WelcomeActivity extends BaseActivity {
 		return inputChecker;
 	}
 
-	private void checkCredential(String username, String password, boolean isSignIn) {
-		setButtonLoading(isSignIn ? signInButton : signUpButton);
-		doUserConnect(username, password, isSignIn);
+	private void checkCredential(String username, String password) {
+		setButtonLoading(isSignInScreen ? signInButton : signUpButton);
+		doUserConnect(username, password);
 	}
 
 	private void setButtonLoading(ActionProcessButton button) {
@@ -187,9 +199,9 @@ public class WelcomeActivity extends BaseActivity {
 		buttonLoading.setProgress(1);
 	}
 
-	private void doUserConnect(String username, String password, boolean isSignIn) {
+	private void doUserConnect(String username, String password) {
 		SyncCredentials mCredentials = SyncCredentials
-				.usernamePassword(username, password, !isSignIn);
+				.usernamePassword(username, password, !isSignInScreen);
 		SyncUser.logInAsync(mCredentials, AUTH_URL, syncUserCallback);
 	}
 
@@ -199,15 +211,30 @@ public class WelcomeActivity extends BaseActivity {
 			runOnUiThread(() -> {
 				buttonLoading.setProgress(100);
 				setUpDefaultRealm();
+				if (!isSignInScreen) {
+					createUser();
+				}
+				isLockSwitchScreen = false;
 				MainActivity.open(WelcomeActivity.this);
 			});
 		}
 
 		@Override
 		public void onError(@NonNull ObjectServerError error) {
-			runOnUiThread(() -> buttonLoading.setProgress(-1));
+			runOnUiThread(() -> {
+				isLockSwitchScreen = false;
+				buttonLoading.setProgress(-1);
+			});
 		}
 	};
+
+	private void createUser() {
+		Realm realm = Realm.getDefaultInstance();
+		realm.beginTransaction();
+		realm.insert(new User(SyncUser.current().getIdentity()));
+		realm.commitTransaction();
+		realm.close();
+	}
 
 	private boolean isUsernameValid(String username) {
 		return username.length() <= 20;

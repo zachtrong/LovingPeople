@@ -22,6 +22,9 @@ import com.stfalcon.chatkit.dialogs.DialogsListAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class MessageFragment extends BaseFragment {
 
@@ -29,6 +32,8 @@ public class MessageFragment extends BaseFragment {
 	Toolbar toolbar;
 	@BindView(R.id.dl_message)
 	DialogsList dialogsList;
+
+	Realm realm;
 
 	@Nullable
 	@Override
@@ -43,8 +48,19 @@ public class MessageFragment extends BaseFragment {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
 		super.setUpToolbar(toolbar);
-		setUpImageLoader();
-		initAdapter();
+		setupRecyclerView();
+	}
+
+	private void setupRecyclerView() {
+		RealmResults<ChatRoom> items = setupRealm();
+	}
+
+	private RealmResults setupRealm() {
+		realm = Realm.getDefaultInstance();
+
+		return realm
+				.where(ChatRoom.class)
+				.findAllAsync();
 	}
 
 	@Override
@@ -57,11 +73,5 @@ public class MessageFragment extends BaseFragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_message, menu);
 		super.onCreateOptionsMenu(menu, inflater);
-	}
-
-	private void setUpImageLoader() {
-	}
-
-	private void initAdapter() {
 	}
 }

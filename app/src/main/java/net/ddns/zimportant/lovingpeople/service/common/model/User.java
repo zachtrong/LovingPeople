@@ -6,8 +6,12 @@ import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
 public class User extends RealmObject {
-	private static final String STORY_TELLER = "StoryTeller";
-	private static final String COUNSELOR = "Counselor";
+	public static final String STORY_TELLER = "StoryTeller";
+	public static final String COUNSELOR = "Counselor";
+	public static final String USER_OFFLINE = "Offline";
+	public static final String USER_BUSY = "Busy";
+	public static final String USER_ONLINE = "Online";
+	public static final String DEFAULT_USER_IMAGE = "https://i.imgur.com/pnMv3iK.png";
 
 	@Required
 	@PrimaryKey
@@ -20,6 +24,18 @@ public class User extends RealmObject {
 	private String status;
 	@Required
 	private String userType;
+	private User userRequest;
+
+	public User() {
+	}
+
+	public User(String id) {
+		this.id = id;
+		this.name = "Anonymous";
+		this.avatarUrl = DEFAULT_USER_IMAGE;
+		this.status = USER_ONLINE;
+		this.userType = STORY_TELLER;
+	}
 
 	public String getId() {
 		return id;

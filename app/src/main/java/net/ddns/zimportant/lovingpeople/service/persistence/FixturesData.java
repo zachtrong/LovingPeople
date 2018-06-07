@@ -4,14 +4,14 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static net.ddns.zimportant.lovingpeople.service.Constant.USER_BUSY;
-import static net.ddns.zimportant.lovingpeople.service.Constant.USER_OFFLINE;
-import static net.ddns.zimportant.lovingpeople.service.Constant.USER_ONLINE;
+import static net.ddns.zimportant.lovingpeople.service.common.model.User.USER_BUSY;
+import static net.ddns.zimportant.lovingpeople.service.common.model.User.USER_OFFLINE;
+import static net.ddns.zimportant.lovingpeople.service.common.model.User.USER_ONLINE;
 
 /*
  * Created by Anton Bevza on 1/13/17.
  */
-abstract class FixturesData {
+public class FixturesData {
 
 	static SecureRandom rnd = new SecureRandom();
 
@@ -155,7 +155,7 @@ abstract class FixturesData {
 		return status.get(rnd.nextInt(status.size()));
 	}
 
-	static String getRandomHomeContent() {
+	public static String getRandomHomeContent() {
 		return homePostContentData.get(rnd.nextInt(homePostContentData.size()));
 	}
 

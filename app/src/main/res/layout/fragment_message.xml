@@ -18,13 +18,11 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         />
 
-    <com.stfalcon.chatkit.dialogs.DialogsList
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <android.support.v7.widget.RecyclerView
         android:layout_below="@id/tb_message"
-        android:id="@+id/dl_message"
-        app:dialogUnreadItemBackground="@color/grey_transparent"
-        app:dialogUnreadTitleTextStyle="bold"/>
+        android:id="@+id/rv_message"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_message"

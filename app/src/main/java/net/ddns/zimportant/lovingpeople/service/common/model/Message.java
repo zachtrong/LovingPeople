@@ -21,16 +21,16 @@ public class Message extends RealmObject {
 	private String body;
 	@Required
 	private Date createdAt;
-	private User author;
+	private String authorId;
 
 	public Message() {
 	}
 
-	public Message(String body, User author) {
+	public Message(String body, String authorId) {
 		this.id = UUID.randomUUID().toString();
 		this.body = body;
 		this.createdAt = Calendar.getInstance().getTime();
-		this.author = author;
+		this.authorId = authorId;
 	}
 
 	public String getId() {
@@ -57,11 +57,11 @@ public class Message extends RealmObject {
 		this.createdAt = createdAt;
 	}
 
-	public User getAuthor() {
-		return author;
+	public String getAuthorId() {
+		return authorId;
 	}
 
-	public void setAuthor(User author) {
-		this.author = author;
+	public void setAuthorId(String authorId) {
+		this.authorId = authorId;
 	}
 }

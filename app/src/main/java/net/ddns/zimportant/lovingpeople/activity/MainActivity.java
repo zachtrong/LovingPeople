@@ -19,12 +19,12 @@ import net.ddns.zimportant.lovingpeople.fragment.HomeFragment;
 import net.ddns.zimportant.lovingpeople.fragment.MessageFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
-import net.ddns.zimportant.lovingpeople.service.common.model.HomeItem;
+import net.ddns.zimportant.lovingpeople.service.helper.RealmHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
-import io.realm.SyncConfiguration;
+import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 public class MainActivity extends BaseActivity
@@ -40,6 +40,7 @@ public class MainActivity extends BaseActivity
 	DrawerLayout drawerLayout;
 
 	public static void open(Context context) {
+		RealmHelper.setUpDefaultRealm();
 		context.startActivity(new Intent(context, MainActivity.class));
 	}
 

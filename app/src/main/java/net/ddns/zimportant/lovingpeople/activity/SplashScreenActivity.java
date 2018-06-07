@@ -2,6 +2,7 @@ package net.ddns.zimportant.lovingpeople.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 import net.ddns.zimportant.lovingpeople.service.Constant;
 import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
@@ -10,7 +11,7 @@ import io.realm.ObjectServerError;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
-public class SplashScreenActivity extends BaseActivity {
+public class SplashScreenActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -20,6 +21,7 @@ public class SplashScreenActivity extends BaseActivity {
 		} else {
 			WelcomeActivity.open(this);
 		}
+		finish();
 
 		/*
 		TaskStackBuilder.create(this)

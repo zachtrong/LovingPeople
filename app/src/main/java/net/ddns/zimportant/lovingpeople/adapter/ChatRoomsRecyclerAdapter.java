@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
-import net.ddns.zimportant.lovingpeople.service.common.model.User;
+import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.utils.FormatUtils;
 
 import butterknife.BindView;
@@ -22,9 +22,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
 
-import static net.ddns.zimportant.lovingpeople.service.common.model.User.USER_BUSY;
-import static net.ddns.zimportant.lovingpeople.service.common.model.User.USER_OFFLINE;
-import static net.ddns.zimportant.lovingpeople.service.common.model.User.USER_ONLINE;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_OFFLINE;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class ChatRoomsRecyclerAdapter
 		extends RealmRecyclerViewAdapter<ChatRoom, ChatRoomsRecyclerAdapter.ChatRoomViewHolder> {
@@ -47,7 +47,6 @@ public class ChatRoomsRecyclerAdapter
 	}
 
 	static class ChatRoomViewHolder extends RecyclerView.ViewHolder {
-		ChatRoom chatRoom;
 		@BindView(R.id.dialogAvatar)
 		CircleImageView imageView;
 		@BindView(R.id.onlineIndicator)
@@ -58,6 +57,9 @@ public class ChatRoomsRecyclerAdapter
 		TextView chatRoomLastMessage;
 		@BindView(R.id.dialogDate)
 		TextView chatRoomLastDate;
+
+		ChatRoom chatRoom;
+		UserChat user;
 
 		ChatRoomViewHolder(View itemView) {
 			super(itemView);
@@ -75,20 +77,30 @@ public class ChatRoomsRecyclerAdapter
 		}
 
 		private void updateUser() {
+			getUserFromChatRoom();
 			updateImageChatRoom();
 			updateOnlineIndicator();
 			updateChatRoomName();
 		}
 
+		private void getUserFromChatRoom() {
+			user = chatRoom
+					.getRealm()
+					.where(UserChat.class)
+					.findFirst();
+
+			if (user == null) {
+				throw new Error("HA");
+			}
+		}
+
 		private void updateImageChatRoom() {
-			User user = chatRoom.getUser();
 			Picasso.get()
 					.load(user.getAvatarUrl())
 					.into(imageView);
 		}
 
 		private void updateOnlineIndicator() {
-			User user = chatRoom.getUser();
 			switch (user.getStatus()) {
 				case USER_ONLINE:
 					onlineIndicatorView.setImageResource(R.drawable.shape_bubble_online);
@@ -103,7 +115,6 @@ public class ChatRoomsRecyclerAdapter
 		}
 
 		private void updateChatRoomName() {
-			User user = chatRoom.getUser();
 			chatRoomName.setText(user.getName());
 		}
 

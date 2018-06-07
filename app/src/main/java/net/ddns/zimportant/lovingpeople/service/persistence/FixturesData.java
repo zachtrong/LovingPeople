@@ -4,9 +4,9 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static net.ddns.zimportant.lovingpeople.service.common.model.User.USER_BUSY;
-import static net.ddns.zimportant.lovingpeople.service.common.model.User.USER_OFFLINE;
-import static net.ddns.zimportant.lovingpeople.service.common.model.User.USER_ONLINE;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_OFFLINE;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 /*
  * Created by Anton Bevza on 1/13/17.

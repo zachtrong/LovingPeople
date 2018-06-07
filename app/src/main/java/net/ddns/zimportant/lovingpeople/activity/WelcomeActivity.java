@@ -15,19 +15,18 @@ import android.widget.EditText;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import net.ddns.zimportant.lovingpeople.R;
-import net.ddns.zimportant.lovingpeople.service.common.model.User;
+import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
+import net.ddns.zimportant.lovingpeople.service.helper.RealmHelper;
 import net.ddns.zimportant.lovingpeople.service.utils.InputChecker;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.ObjectServerError;
 import io.realm.Realm;
-import io.realm.SyncConfiguration;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.AUTH_URL;
-import static net.ddns.zimportant.lovingpeople.service.Constant.DEFAULT_REALM_URL;
 
 public class WelcomeActivity extends BaseActivity {
 
@@ -68,7 +67,6 @@ public class WelcomeActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_welcome);
 		if (SyncUser.current() != null) {
-			setUpDefaultRealm();
 			MainActivity.open(this);
 			finish();
 		}
@@ -79,14 +77,6 @@ public class WelcomeActivity extends BaseActivity {
         signInButton.setOnClickListener(signInListener);
         signInButton.setMode(ActionProcessButton.Mode.ENDLESS);
         signUpButton.setMode(ActionProcessButton.Mode.ENDLESS);
-	}
-
-	private void setUpDefaultRealm() {
-		SyncConfiguration syncConfiguration =
-				new SyncConfiguration.Builder(SyncUser.current(), DEFAULT_REALM_URL)
-				.partialRealm()
-				.build();
-		Realm.setDefaultConfiguration(syncConfiguration);
 	}
 
 	private View.OnClickListener signUpOnClickListener = v -> {
@@ -210,7 +200,6 @@ public class WelcomeActivity extends BaseActivity {
 		public void onSuccess(@NonNull SyncUser result) {
 			runOnUiThread(() -> {
 				buttonLoading.setProgress(100);
-				setUpDefaultRealm();
 				if (!isSignInScreen) {
 					createUser();
 				}
@@ -229,10 +218,11 @@ public class WelcomeActivity extends BaseActivity {
 	};
 
 	private void createUser() {
+		RealmHelper.setUpDefaultRealm();
 		Realm realm = Realm.getDefaultInstance();
-		realm.beginTransaction();
-		realm.insert(new User(SyncUser.current().getIdentity()));
-		realm.commitTransaction();
+		realm.executeTransaction(bgRealm -> {
+			bgRealm.insert(new UserChat(SyncUser.current().getIdentity()));
+		});
 		realm.close();
 	}
 

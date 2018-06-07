@@ -2,17 +2,11 @@ package net.ddns.zimportant.lovingpeople.service.persistence;
 
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.Message;
-import net.ddns.zimportant.lovingpeople.service.common.model.User;
+import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
-import static net.ddns.zimportant.lovingpeople.service.persistence.FixturesData.getRandomAvatar;
-import static net.ddns.zimportant.lovingpeople.service.persistence.FixturesData.getRandomId;
-import static net.ddns.zimportant.lovingpeople.service.persistence.FixturesData.getRandomMessage;
-import static net.ddns.zimportant.lovingpeople.service.persistence.FixturesData.getRandomName;
-import static net.ddns.zimportant.lovingpeople.service.persistence.FixturesData.getRandomStatus;
 
 public class DialogData {
 	private DialogData() {
@@ -32,12 +26,12 @@ public class DialogData {
 	}
 
 	private static ChatRoom getDialog(int i, Date lastMessageCreatedAt) {
-		ArrayList<User> users = getUsers();
+		ArrayList<UserChat> users = getUsers();
 		return null;
 	}
 
-	private static ArrayList<User> getUsers() {
-		ArrayList<User> users = new ArrayList<>();
+	private static ArrayList<UserChat> getUsers() {
+		ArrayList<UserChat> users = new ArrayList<>();
 		int usersCount = 1;
 
 		for (int i = 0; i < usersCount; i++) {
@@ -47,7 +41,7 @@ public class DialogData {
 		return users;
 	}
 
-	private static User getUser() {
+	private static UserChat getUser() {
 		return null;
 	}
 

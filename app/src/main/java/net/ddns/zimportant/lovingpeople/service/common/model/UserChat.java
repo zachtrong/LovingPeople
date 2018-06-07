@@ -5,7 +5,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-public class User extends RealmObject {
+public class UserChat extends RealmObject {
 	public static final String STORY_TELLER = "StoryTeller";
 	public static final String COUNSELOR = "Counselor";
 	public static final String USER_OFFLINE = "Offline";
@@ -24,12 +24,12 @@ public class User extends RealmObject {
 	private String status;
 	@Required
 	private String userType;
-	private User userRequest;
+	private String userRequestId;
 
-	public User() {
+	public UserChat() {
 	}
 
-	public User(String id) {
+	public UserChat(String id) {
 		this.id = id;
 		this.name = "Anonymous";
 		this.avatarUrl = DEFAULT_USER_IMAGE;

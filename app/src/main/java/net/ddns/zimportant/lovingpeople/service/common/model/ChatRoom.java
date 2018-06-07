@@ -19,9 +19,8 @@ public class ChatRoom extends RealmObject {
 	@Required
 	@PrimaryKey
 	private String id;
-	@Required
 	private boolean isExpired;
-	private User user;
+	private String userId;
 	private RealmList<Message> messages;
 
 	public ChatRoom() {
@@ -29,10 +28,8 @@ public class ChatRoom extends RealmObject {
 
 	public ChatRoom(String userId) {
 		this.id = UUID.randomUUID().toString();
-		this.user = user;
+		this.userId = userId;
 		this.isExpired = false;
-		this.messages = new RealmList<>();
-		this.messages.add(new Message("", new User()));
 	}
 
 	public String getId() {
@@ -51,12 +48,12 @@ public class ChatRoom extends RealmObject {
 		isExpired = expired;
 	}
 
-	public User getUser() {
-		return user;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public RealmList<Message> getMessages() {

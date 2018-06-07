@@ -3,6 +3,9 @@ package net.ddns.zimportant.lovingpeople.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,29 +14,29 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.ddns.zimportant.lovingpeople.R;
-import net.ddns.zimportant.lovingpeople.activity.ConversationActivity;
+import net.ddns.zimportant.lovingpeople.adapter.ChatRoomsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
-import net.ddns.zimportant.lovingpeople.service.persistence.DialogData;
+import net.ddns.zimportant.lovingpeople.service.common.model.HomeItem;
+import net.ddns.zimportant.lovingpeople.service.common.model.Message;
+import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
-import com.squareup.picasso.Picasso;
-import com.stfalcon.chatkit.commons.ImageLoader;
-import com.stfalcon.chatkit.dialogs.DialogsList;
-import com.stfalcon.chatkit.dialogs.DialogsListAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import io.realm.Sort;
 
 public class MessageFragment extends BaseFragment {
 
 	@BindView(R.id.tb_message)
 	Toolbar toolbar;
-	@BindView(R.id.dl_message)
-	DialogsList dialogsList;
+	@BindView(R.id.rv_message)
+	RecyclerView chatRoomRecyclerView;
+	@BindView(R.id.fab_message)
+	FloatingActionButton fab;
 
 	Realm realm;
+	RecyclerView.LayoutManager layoutManager;
 
 	@Nullable
 	@Override
@@ -48,11 +51,17 @@ public class MessageFragment extends BaseFragment {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
 		super.setUpToolbar(toolbar);
-		setupRecyclerView();
+		setUpRecyclerView();
+		setUpFab();
 	}
 
-	private void setupRecyclerView() {
+	private void setUpRecyclerView() {
 		RealmResults<ChatRoom> items = setupRealm();
+		ChatRoomsRecyclerAdapter chatRoomsRecyclerAdapter = new ChatRoomsRecyclerAdapter(items);
+
+		layoutManager = new LinearLayoutManager(getContext());
+		chatRoomRecyclerView.setLayoutManager(layoutManager);
+		chatRoomRecyclerView.setAdapter(chatRoomsRecyclerAdapter);
 	}
 
 	private RealmResults setupRealm() {
@@ -61,6 +70,17 @@ public class MessageFragment extends BaseFragment {
 		return realm
 				.where(ChatRoom.class)
 				.findAllAsync();
+	}
+
+	private void setUpFab() {
+		fab.setOnClickListener(view -> {
+			realm.executeTransaction(realm -> {
+				realm.copyToRealm(
+						new ChatRoom("f57237010bf65d28ebabe2b1b31f21b4")
+						// TODO
+				);
+			});
+		});
 	}
 
 	@Override
@@ -73,5 +93,11 @@ public class MessageFragment extends BaseFragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_message, menu);
 		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		realm.close();
 	}
 }

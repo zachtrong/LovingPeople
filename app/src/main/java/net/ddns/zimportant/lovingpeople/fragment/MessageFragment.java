@@ -1,6 +1,7 @@
 package net.ddns.zimportant.lovingpeople.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -14,10 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.ddns.zimportant.lovingpeople.R;
+import net.ddns.zimportant.lovingpeople.activity.SearchCounselorActivity;
 import net.ddns.zimportant.lovingpeople.adapter.ChatRoomsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
-import net.ddns.zimportant.lovingpeople.service.common.model.HomeItem;
-import net.ddns.zimportant.lovingpeople.service.common.model.Message;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
@@ -67,6 +67,16 @@ public class MessageFragment extends BaseFragment {
 	private RealmResults setupRealm() {
 		realm = Realm.getDefaultInstance();
 
+		registerListenUserChat();
+		return registerListenChatRoom();
+	}
+
+	private void registerListenUserChat() {
+		realm.where(UserChat.class)
+				.findAllAsync();
+	}
+
+	private RealmResults registerListenChatRoom() {
 		return realm
 				.where(ChatRoom.class)
 				.findAllAsync();
@@ -74,12 +84,7 @@ public class MessageFragment extends BaseFragment {
 
 	private void setUpFab() {
 		fab.setOnClickListener(view -> {
-			realm.executeTransaction(realm -> {
-				realm.copyToRealm(
-						new ChatRoom("f57237010bf65d28ebabe2b1b31f21b4")
-						// TODO
-				);
-			});
+			SearchCounselorActivity.open(getContext());
 		});
 	}
 

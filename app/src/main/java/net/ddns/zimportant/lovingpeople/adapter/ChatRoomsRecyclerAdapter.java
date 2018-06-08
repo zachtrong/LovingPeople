@@ -3,6 +3,7 @@ package net.ddns.zimportant.lovingpeople.adapter;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,19 @@ import com.squareup.picasso.Picasso;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
+import net.ddns.zimportant.lovingpeople.service.common.model.Message;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
+import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 import net.ddns.zimportant.lovingpeople.service.utils.FormatUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.realm.ObjectChangeSet;
+import io.realm.OrderedCollectionChangeSet;
 import io.realm.OrderedRealmCollection;
+import io.realm.OrderedRealmCollectionChangeListener;
+import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
 
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
@@ -72,26 +79,22 @@ public class ChatRoomsRecyclerAdapter
 		}
 
 		private void updateLayout() {
-			updateUser();
+			updateFromUser();
 			updateChatRoomInfo();
 		}
 
-		private void updateUser() {
-			getUserFromChatRoom();
-			updateImageChatRoom();
-			updateOnlineIndicator();
-			updateChatRoomName();
-		}
-
-		private void getUserFromChatRoom() {
-			user = chatRoom
+		private void updateFromUser() {
+			chatRoom
 					.getRealm()
 					.where(UserChat.class)
-					.findFirst();
-
-			if (user == null) {
-				throw new Error("HA");
-			}
+					.equalTo("id", chatRoom.getUserId())
+					.findFirstAsync()
+					.addChangeListener((UserChat realmModel) -> {
+						user = realmModel;
+						updateImageChatRoom();
+						updateOnlineIndicator();
+						updateChatRoomName();
+					});
 		}
 
 		private void updateImageChatRoom() {
@@ -119,8 +122,10 @@ public class ChatRoomsRecyclerAdapter
 		}
 
 		private void updateChatRoomInfo() {
-			updateChatRoomLastMessage();
-			updateChatRoomLastDate();
+			if (chatRoom.getMessages().size() != 0) {
+				updateChatRoomLastMessage();
+				updateChatRoomLastDate();
+			}
 		}
 
 		private void updateChatRoomLastMessage() {

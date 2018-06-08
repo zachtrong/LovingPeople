@@ -15,6 +15,10 @@ public class FixturesData {
 
 	static SecureRandom rnd = new SecureRandom();
 
+	public static ArrayList<String> getHomePostContentData() {
+		return homePostContentData;
+	}
+
 	static ArrayList<String> homePostContentData = new ArrayList<String>() {
 		{
 			add("Depression distorts your thinking. When you are depressed, your mind can play tricks on you. If you have thoughts of suicide, please call someone immediately. Don't let a temporary glitch in your thinking cause you to harm yourself or another.");

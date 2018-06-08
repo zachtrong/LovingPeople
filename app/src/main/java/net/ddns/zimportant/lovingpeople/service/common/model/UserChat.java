@@ -1,6 +1,7 @@
 package net.ddns.zimportant.lovingpeople.service.common.model;
 import com.stfalcon.chatkit.commons.models.IUser;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -24,6 +25,8 @@ public class UserChat extends RealmObject {
 	private String status;
 	@Required
 	private String userType;
+
+	private RealmList<String> fields;
 	private String userRequestId;
 
 	public UserChat() {
@@ -31,7 +34,7 @@ public class UserChat extends RealmObject {
 
 	public UserChat(String id) {
 		this.id = id;
-		this.name = "Anonymous";
+		this.name = "Anonymous".concat(id);
 		this.avatarUrl = DEFAULT_USER_IMAGE;
 		this.status = USER_ONLINE;
 		this.userType = STORY_TELLER;
@@ -76,4 +79,13 @@ public class UserChat extends RealmObject {
 	public void setUserType(String userType) {
 		this.userType = userType;
 	}
+
+	public RealmList<String> getFields() {
+		return fields;
+	}
+
+	public void setFields(RealmList<String> fields) {
+		this.fields = fields;
+	}
+
 }

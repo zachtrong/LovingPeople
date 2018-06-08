@@ -5,15 +5,13 @@
     <string name="title_profile">Profile</string>
     <string name="title_resource">Resource</string>
     <string name="title_chatting">Chatting</string>
+    <string name="title_search">Search</string>
 
     <string name="nav_header_title">Anonymous</string>
     <string name="nav_header_subtitle">id</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="navigation_drawer_open">Opening Drawer</string>
     <string name="navigation_drawer_close">Closing Drawer</string>
-
-    <string name="title_search">Searching</string>
-    <string name="hint_enter_a_message">Type a message&#8230;</string>
 
     <string name="welcome_message">Welcome to\nLoving People</string>
     <string name="welcome_username">Username</string>
@@ -29,6 +27,8 @@
     <string name="error_invalid_username">Invalid Username</string>
     <string name="error_invalid_password">Invalid Password</string>
     <string name="error_invalid_matching">Not Match!</string>
+
+    <string name="hint_enter_a_message">Type a message</string>
 
     <string name="switch_to_counselor">Switch to Counselor</string>
     <string name="switch_to_storyteller">Switch to Storyteller</string>

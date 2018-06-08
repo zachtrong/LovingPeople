@@ -1,5 +1,4 @@
 package net.ddns.zimportant.lovingpeople.service.common.model;
-import com.stfalcon.chatkit.commons.models.IUser;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -7,7 +6,7 @@ import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
 public class UserChat extends RealmObject {
-	public static final String STORY_TELLER = "StoryTeller";
+	public static final String STORYTELLER = "Storyteller";
 	public static final String COUNSELOR = "Counselor";
 	public static final String USER_OFFLINE = "Offline";
 	public static final String USER_BUSY = "Busy";
@@ -25,6 +24,8 @@ public class UserChat extends RealmObject {
 	private String status;
 	@Required
 	private String userType;
+	@Required
+	private String currentUserType;
 
 	private RealmList<String> fields;
 	private String userRequestId;
@@ -37,7 +38,8 @@ public class UserChat extends RealmObject {
 		this.name = "Anonymous".concat(id);
 		this.avatarUrl = DEFAULT_USER_IMAGE;
 		this.status = USER_ONLINE;
-		this.userType = STORY_TELLER;
+		this.userType = STORYTELLER;
+		this.currentUserType = STORYTELLER;
 	}
 
 	public String getId() {
@@ -88,4 +90,19 @@ public class UserChat extends RealmObject {
 		this.fields = fields;
 	}
 
+	public String getCurrentUserType() {
+		return currentUserType;
+	}
+
+	public void setCurrentUserType(String currentUserType) {
+		this.currentUserType = currentUserType;
+	}
+
+	public String getUserRequestId() {
+		return userRequestId;
+	}
+
+	public void setUserRequestId(String userRequestId) {
+		this.userRequestId = userRequestId;
+	}
 }

@@ -19,11 +19,18 @@ import net.ddns.zimportant.lovingpeople.fragment.HomeFragment;
 import net.ddns.zimportant.lovingpeople.fragment.MessageFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
+import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.RealmHelper;
+import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
+
+import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.ObjectChangeSet;
 import io.realm.Realm;
+import io.realm.RealmModel;
+import io.realm.RealmObjectChangeListener;
 import io.realm.RealmResults;
 import io.realm.SyncUser;
 
@@ -71,16 +78,20 @@ public class MainActivity extends BaseActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.action_logout) {
-			SyncUser syncUser = SyncUser.current();
-			if (syncUser != null) {
-				syncUser.logOut();
-				Intent intent = new Intent(this, WelcomeActivity.class);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-				startActivity(intent);
-			}
+			logOutRealm();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	public void logOutRealm() {
+		SyncUser syncUser = SyncUser.current();
+		if (syncUser != null) {
+			syncUser.logOut();
+			Intent intent = new Intent(this, WelcomeActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			startActivity(intent);
+		}
 	}
 
 	@Override
@@ -116,6 +127,10 @@ public class MainActivity extends BaseActivity
 			default:
 				return new HomeFragment();
 		}
+	}
+
+	public void restartMessageFragment() {
+		startFragment(navigationView.getMenu().findItem(R.id.navigation_message));
 	}
 
 	public ActionBarDrawerToggle registerDrawerToggle(Toolbar toolbar) {

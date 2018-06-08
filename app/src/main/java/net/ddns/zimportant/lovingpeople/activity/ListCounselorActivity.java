@@ -12,6 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,7 +26,7 @@ import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.adapter.UserChatsListRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 
-import static android.icu.text.UnicodeSet.CASE;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 
 public class ListCounselorActivity extends AppCompatActivity
 		implements SearchView.OnQueryTextListener {
@@ -88,7 +90,7 @@ public class ListCounselorActivity extends AppCompatActivity
 				.where(UserChat.class)
 				.notEqualTo("id", SyncUser.current().getIdentity())
 				.and()
-				.equalTo("userType", "Counselor")
+				.equalTo("currentUserType", COUNSELOR)
 				.findAllAsync();
 	}
 
@@ -123,7 +125,7 @@ public class ListCounselorActivity extends AppCompatActivity
 				.where(UserChat.class)
 				.notEqualTo("id", SyncUser.current().getIdentity())
 				.and()
-				.equalTo("userType", "Counselor")
+				.equalTo("currentUserType", COUNSELOR)
 				.and()
 				.contains("name", query, Case.INSENSITIVE)
 				.findAllAsync();

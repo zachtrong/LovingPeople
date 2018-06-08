@@ -1,9 +1,12 @@
 package net.ddns.zimportant.lovingpeople.fragment;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.AppCompatCheckedTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -12,17 +15,26 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.activity.ListCounselorActivity;
+import net.ddns.zimportant.lovingpeople.activity.MainActivity;
 import net.ddns.zimportant.lovingpeople.adapter.ChatRoomsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
+import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.ObjectChangeSet;
 import io.realm.Realm;
+import io.realm.RealmModel;
 import io.realm.RealmResults;
+import io.realm.SyncUser;
+
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
 
 public class MessageFragment extends BaseFragment {
 
@@ -32,9 +44,15 @@ public class MessageFragment extends BaseFragment {
 	RecyclerView chatRoomRecyclerView;
 	@BindView(R.id.fab_message)
 	FloatingActionButton fab;
+	@BindView(R.id.bt_message)
+	Button switchCurrentUserButton;
 
 	Realm realm;
+	UserChat currentUser;
 	RecyclerView.LayoutManager layoutManager;
+	String buttonText;
+	String chatRoomRoleId;
+	boolean isShowFab;
 
 	@Nullable
 	@Override
@@ -49,12 +67,88 @@ public class MessageFragment extends BaseFragment {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
 		super.setUpToolbar(toolbar);
-		setUpRecyclerView();
-		setUpFab();
+		setUpRealm();
+		setUpUser();
+	}
+
+	private void setUpRealm() {
+		realm = Realm.getDefaultInstance();
+	}
+
+	private void setUpUser() {
+		realm
+				.where(UserChat.class)
+				.equalTo("id", SyncUser.current().getIdentity())
+				.findFirstAsync()
+				.addChangeListener((UserChat userChat) -> {
+					currentUser = userChat;
+					if (!(userChat.getId()).equals(SyncUser.current().getIdentity())) {
+						((MainActivity) getContext()).logOutRealm();
+						return;
+					}
+					setUpInformation();
+					setUpSwitchButton();
+					setUpRecyclerView();
+					setUpFab();
+					//currentUser.removeAllChangeListeners();
+				});
+	}
+
+	private void setUpInformation() {
+		switch (currentUser.getCurrentUserType()) {
+			case STORYTELLER:
+				buttonText = "Switch to Counselor";
+				chatRoomRoleId = "storytellerId";
+				isShowFab = true;
+				break;
+			case COUNSELOR:
+				buttonText = "Switch to Storyteller";
+				chatRoomRoleId = "counselorId";
+				isShowFab = true;
+				break;
+		}
+	}
+
+	protected void setUpSwitchButton() {
+		switchCurrentUserButton.setText(buttonText);
+		switchCurrentUserButton.setOnClickListener(v -> {
+			if (currentUser.getUserType().equals(STORYTELLER)) {
+				createAlertDialog();
+				return;
+			}
+
+			if (currentUser.getCurrentUserType().equals(STORYTELLER)) {
+				switchCurrentUserToStoryteller();
+			} else {
+				switchCurrentUserToCounselor();
+			}
+		});
+	}
+
+	private void createAlertDialog() {
+		new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Dialog_Alert)
+				.setTitle("Notification")
+				.setMessage("You are not Counselor yet. Please go to Profile to register")
+				.setPositiveButton("OK", null)
+				.show();
+	}
+
+	private void switchCurrentUserToStoryteller() {
+		realm.executeTransaction(bgRealm -> {
+			currentUser.setCurrentUserType(COUNSELOR);
+			((MainActivity) getContext()).restartMessageFragment();
+		});
+	}
+
+	private void switchCurrentUserToCounselor() {
+		realm.executeTransaction(bgRealm -> {
+			currentUser.setCurrentUserType(STORYTELLER);
+			((MainActivity) getContext()).restartMessageFragment();
+		});
 	}
 
 	private void setUpRecyclerView() {
-		RealmResults<ChatRoom> items = setupRealm();
+		RealmResults<ChatRoom> items = getRealmResults();
 		ChatRoomsRecyclerAdapter chatRoomsRecyclerAdapter = new ChatRoomsRecyclerAdapter(items);
 
 		layoutManager = new LinearLayoutManager(getContext());
@@ -62,28 +156,22 @@ public class MessageFragment extends BaseFragment {
 		chatRoomRecyclerView.setAdapter(chatRoomsRecyclerAdapter);
 	}
 
-	private RealmResults setupRealm() {
-		realm = Realm.getDefaultInstance();
-
-		registerListenUserChat();
-		return registerListenChatRoom();
-	}
-
-	private void registerListenUserChat() {
-		realm.where(UserChat.class)
-				.findAllAsync();
-	}
-
-	private RealmResults registerListenChatRoom() {
+	private RealmResults<ChatRoom> getRealmResults() {
 		return realm
 				.where(ChatRoom.class)
+				.equalTo(chatRoomRoleId, currentUser.getId())
 				.findAllAsync();
 	}
 
 	private void setUpFab() {
-		fab.setOnClickListener(view -> {
-			ListCounselorActivity.open(getContext());
-		});
+		if (isShowFab) {
+			fab.setVisibility(View.VISIBLE);
+			fab.setOnClickListener(view -> {
+				ListCounselorActivity.open(getContext());
+			});
+		} else {
+			fab.setVisibility(View.INVISIBLE);
+		}
 	}
 
 	@Override

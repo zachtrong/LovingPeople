@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.ddns.zimportant.lovingpeople.R;
+import net.ddns.zimportant.lovingpeople.activity.MainActivity;
 import net.ddns.zimportant.lovingpeople.adapter.HomePostsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.HomeItem;
 import net.ddns.zimportant.lovingpeople.service.persistence.FixturesData;
@@ -19,8 +20,11 @@ import net.ddns.zimportant.lovingpeople.service.persistence.FixturesData;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import io.realm.SyncConfiguration;
+import io.realm.SyncUser;
 
 public class HomeFragment extends BaseFragment {
 
@@ -30,8 +34,6 @@ public class HomeFragment extends BaseFragment {
 	RecyclerView recyclerView;
 
 	RecyclerView.LayoutManager layoutManager;
-
-	Realm realm;
 
 	@Nullable
 	@Override
@@ -57,17 +59,9 @@ public class HomeFragment extends BaseFragment {
 	}
 
 	private RealmResults<HomeItem> setUpRealm() {
-		realm = Realm.getDefaultInstance();
-
-		return realm
+		return getMainActivity().getRealm()
 				.where(HomeItem.class)
 				.sort("timestamp", Sort.DESCENDING)
 				.findAllAsync();
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		realm.close();
 	}
 }

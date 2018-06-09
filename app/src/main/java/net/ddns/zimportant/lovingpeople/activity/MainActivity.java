@@ -46,6 +46,8 @@ public class MainActivity extends BaseActivity
 	@BindView(R.id.drawer_layout)
 	DrawerLayout drawerLayout;
 
+	Realm realm;
+
 	public static void open(Context context) {
 		RealmHelper.setUpDefaultRealm();
 		context.startActivity(new Intent(context, MainActivity.class));
@@ -55,7 +57,12 @@ public class MainActivity extends BaseActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		setUpRealm();
 		setUpView();
+	}
+
+	private void setUpRealm() {
+		realm = Realm.getDefaultInstance();
 	}
 
 	private void setUpView() {
@@ -67,6 +74,7 @@ public class MainActivity extends BaseActivity
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		realm.close();
 	}
 
 	@Override
@@ -82,6 +90,14 @@ public class MainActivity extends BaseActivity
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	public Realm getRealm() {
+		return realm;
+	}
+
+	public void setRealm(Realm realm) {
+		this.realm = realm;
 	}
 
 	public void logOutRealm() {

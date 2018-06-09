@@ -1,5 +1,6 @@
 package net.ddns.zimportant.lovingpeople.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,13 +26,21 @@ import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Predicate;
+import io.reactivex.internal.util.AppendOnlyLinkedArrayList;
 import io.realm.ObjectChangeSet;
 import io.realm.Realm;
 import io.realm.RealmModel;
+import io.realm.RealmObject;
+import io.realm.RealmObjectChangeListener;
 import io.realm.RealmResults;
 import io.realm.SyncUser;
+import io.realm.rx.ObjectChange;
 
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
@@ -52,6 +61,7 @@ public class MessageFragment extends BaseFragment {
 	RecyclerView.LayoutManager layoutManager;
 	String buttonText;
 	String chatRoomRoleId;
+	RealmResults<UserChat> userChats;
 	boolean isShowFab;
 
 	@Nullable
@@ -68,34 +78,33 @@ public class MessageFragment extends BaseFragment {
 		ButterKnife.bind(this, view);
 		super.setUpToolbar(toolbar);
 		setUpRealm();
-		setUpUser();
+		setUpViewDelayed();
 	}
 
 	private void setUpRealm() {
-		realm = Realm.getDefaultInstance();
-	}
+		realm = getMainActivity().getRealm();
 
-	private void setUpUser() {
-		realm
-				.where(UserChat.class)
-				.findAllAsync();
-
-		realm
+		currentUser = realm
 				.where(UserChat.class)
 				.equalTo("id", SyncUser.current().getIdentity())
-				.findFirstAsync()
-				.addChangeListener((UserChat userChat) -> {
-					currentUser = userChat;
-					if (!(userChat.getId()).equals(SyncUser.current().getIdentity())) {
-						((MainActivity) getContext()).logOutRealm();
-						return;
-					}
-					setUpInformation();
-					setUpSwitchButton();
-					setUpRecyclerView();
-					setUpFab();
-					//currentUser.removeAllChangeListeners();
-				});
+				.findFirstAsync();
+	}
+
+	private void setUpViewDelayed() {
+		// TODO fix bugs completely
+		new Handler().postDelayed(this::setUpView, 2000);
+	}
+
+	@SuppressLint("CheckResult")
+	private void setUpView() {
+		if (!(currentUser.getId()).equals(SyncUser.current().getIdentity())) {
+			getMainActivity().logOutRealm();
+			return;
+		}
+		setUpInformation();
+		setUpSwitchButton();
+		setUpRecyclerView();
+		setUpFab();
 	}
 
 	private void setUpInformation() {
@@ -140,7 +149,7 @@ public class MessageFragment extends BaseFragment {
 	private void switchCurrentUser(String userRole) {
 		realm.executeTransaction(bgRealm -> {
 			currentUser.setCurrentUserType(userRole);
-			((MainActivity) getContext()).restartMessageFragment();
+			getMainActivity().restartMessageFragment();
 		});
 	}
 
@@ -184,8 +193,8 @@ public class MessageFragment extends BaseFragment {
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		realm.close();
+	public void onDestroyView() {
+		super.onDestroyView();
+		realm.removeAllChangeListeners();
 	}
 }

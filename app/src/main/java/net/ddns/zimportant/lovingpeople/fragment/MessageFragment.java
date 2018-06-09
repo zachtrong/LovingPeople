@@ -146,6 +146,7 @@ public class MessageFragment extends BaseFragment {
 	}
 
 	private void switchCurrentUser(String userRole) {
+		realm.removeAllChangeListeners();
 		realm.executeTransaction(bgRealm -> {
 			currentUser.setCurrentUserType(userRole);
 		});
@@ -194,6 +195,5 @@ public class MessageFragment extends BaseFragment {
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		realm.removeAllChangeListeners();
 	}
 }

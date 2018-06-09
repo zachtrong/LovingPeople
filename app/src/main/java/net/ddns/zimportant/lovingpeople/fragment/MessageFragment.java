@@ -78,6 +78,10 @@ public class MessageFragment extends BaseFragment {
 	private void setUpUser() {
 		realm
 				.where(UserChat.class)
+				.findAllAsync();
+
+		realm
+				.where(UserChat.class)
 				.equalTo("id", SyncUser.current().getIdentity())
 				.findFirstAsync()
 				.addChangeListener((UserChat userChat) -> {
@@ -118,9 +122,9 @@ public class MessageFragment extends BaseFragment {
 			}
 
 			if (currentUser.getCurrentUserType().equals(STORYTELLER)) {
-				switchCurrentUserToStoryteller();
+				switchCurrentUser(COUNSELOR);
 			} else {
-				switchCurrentUserToCounselor();
+				switchCurrentUser(STORYTELLER);
 			}
 		});
 	}
@@ -133,16 +137,9 @@ public class MessageFragment extends BaseFragment {
 				.show();
 	}
 
-	private void switchCurrentUserToStoryteller() {
+	private void switchCurrentUser(String userRole) {
 		realm.executeTransaction(bgRealm -> {
-			currentUser.setCurrentUserType(COUNSELOR);
-			((MainActivity) getContext()).restartMessageFragment();
-		});
-	}
-
-	private void switchCurrentUserToCounselor() {
-		realm.executeTransaction(bgRealm -> {
-			currentUser.setCurrentUserType(STORYTELLER);
+			currentUser.setCurrentUserType(userRole);
 			((MainActivity) getContext()).restartMessageFragment();
 		});
 	}

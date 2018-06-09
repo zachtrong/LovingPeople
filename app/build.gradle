@@ -43,7 +43,7 @@ dependencies {
     implementation 'com.github.stfalcon:chatkit:0.2.2'
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
 
-    implementation 'io.realm:realm-annotations-processor:5.0.1'
+    implementation 'io.realm:realm-annotations-processor:5.2.0'
     implementation 'io.realm:android-adapters:3.0.0'
 
     implementation 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'

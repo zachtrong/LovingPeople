@@ -3,11 +3,9 @@ package net.ddns.zimportant.lovingpeople.fragment;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.AppCompatCheckedTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,27 +18,15 @@ import android.widget.Button;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.activity.ListCounselorActivity;
-import net.ddns.zimportant.lovingpeople.activity.MainActivity;
 import net.ddns.zimportant.lovingpeople.adapter.ChatRoomsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
-
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Predicate;
-import io.reactivex.internal.util.AppendOnlyLinkedArrayList;
-import io.realm.ObjectChangeSet;
 import io.realm.Realm;
-import io.realm.RealmModel;
-import io.realm.RealmObject;
-import io.realm.RealmObjectChangeListener;
 import io.realm.RealmResults;
 import io.realm.SyncUser;
-import io.realm.rx.ObjectChange;
 
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
@@ -57,11 +43,11 @@ public class MessageFragment extends BaseFragment {
 	Button switchCurrentUserButton;
 
 	Realm realm;
-	UserChat currentUser;
 	RecyclerView.LayoutManager layoutManager;
 	String buttonText;
 	String chatRoomRoleId;
 	RealmResults<UserChat> userChats;
+	UserChat currentUser;
 	boolean isShowFab;
 
 	@Nullable
@@ -78,26 +64,39 @@ public class MessageFragment extends BaseFragment {
 		ButterKnife.bind(this, view);
 		super.setUpToolbar(toolbar);
 		setUpRealm();
+		setUpCurrentUser();
 		setUpViewDelayed();
 	}
 
 	private void setUpRealm() {
 		realm = getMainActivity().getRealm();
 
-		currentUser = realm
+		userChats = realm
 				.where(UserChat.class)
-				.equalTo("id", SyncUser.current().getIdentity())
-				.findFirstAsync();
+				.findAllAsync();
 	}
 
 	private void setUpViewDelayed() {
-		// TODO fix bugs completely
-		new Handler().postDelayed(this::setUpView, 2000);
+		userChats.addChangeListener((userChats, changeSet) -> {
+			if (userChats.isLoaded()) {
+				userChats.removeAllChangeListeners();
+				setUpCurrentUser();
+				setUpView();
+			}
+		});
+	}
+
+	@SuppressLint("CheckResult")
+	private void setUpCurrentUser() {
+		currentUser = userChats
+				.where()
+				.equalTo("id", SyncUser.current().getIdentity())
+				.findFirst();
 	}
 
 	@SuppressLint("CheckResult")
 	private void setUpView() {
-		if (!(currentUser.getId()).equals(SyncUser.current().getIdentity())) {
+		if (currentUser == null || !currentUser.isValid()) {
 			getMainActivity().logOutRealm();
 			return;
 		}
@@ -117,7 +116,7 @@ public class MessageFragment extends BaseFragment {
 			case COUNSELOR:
 				buttonText = "Switch to Storyteller";
 				chatRoomRoleId = "counselorId";
-				isShowFab = true;
+				isShowFab = false;
 				break;
 		}
 	}
@@ -149,8 +148,8 @@ public class MessageFragment extends BaseFragment {
 	private void switchCurrentUser(String userRole) {
 		realm.executeTransaction(bgRealm -> {
 			currentUser.setCurrentUserType(userRole);
-			getMainActivity().restartMessageFragment();
 		});
+		getMainActivity().restartMessageFragment();
 	}
 
 	private void setUpRecyclerView() {
@@ -176,7 +175,7 @@ public class MessageFragment extends BaseFragment {
 				ListCounselorActivity.open(getContext());
 			});
 		} else {
-			fab.setVisibility(View.INVISIBLE);
+			fab.setVisibility(View.GONE);
 		}
 	}
 

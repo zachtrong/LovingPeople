@@ -15,6 +15,5 @@ public class RealmHelper {
 				.createConfiguration(DEFAULT_REALM_URL)
 				.build();
 		Realm.setDefaultConfiguration(syncConfiguration);
-		RealmLog.setLevel(Log.VERBOSE);
 	}
 }

@@ -16,6 +16,7 @@ import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.Message;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
+import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
 import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 import net.ddns.zimportant.lovingpeople.service.utils.FormatUtils;
 
@@ -104,17 +105,9 @@ public class ChatRoomsRecyclerAdapter
 		}
 
 		private void updateOnlineIndicator() {
-			switch (user.getStatus()) {
-				case USER_ONLINE:
-					onlineIndicatorView.setImageResource(R.drawable.shape_bubble_online);
-					break;
-				case USER_OFFLINE:
-					onlineIndicatorView.setImageResource(R.drawable.shape_bubble_offline);
-					break;
-				case USER_BUSY:
-					onlineIndicatorView.setImageResource(R.drawable.shape_bubble_busy);
-					break;
-			}
+			onlineIndicatorView.setImageResource(
+					UserHelper.getOnlineIndicatorResource(user.getStatus())
+			);
 		}
 
 		private void updateChatRoomName() {

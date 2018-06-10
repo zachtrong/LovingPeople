@@ -21,6 +21,7 @@ import net.ddns.zimportant.lovingpeople.activity.ListCounselorActivity;
 import net.ddns.zimportant.lovingpeople.adapter.ChatRoomsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
+import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,7 +66,7 @@ public class MessageFragment extends BaseFragment {
 		super.setUpToolbar(toolbar);
 		setUpRealm();
 		setUpCurrentUser();
-		setUpViewDelayed();
+		setUpMessageAsync();
 	}
 
 	private void setUpRealm() {
@@ -76,17 +77,16 @@ public class MessageFragment extends BaseFragment {
 				.findAllAsync();
 	}
 
-	private void setUpViewDelayed() {
+	private void setUpMessageAsync() {
 		userChats.addChangeListener((userChats, changeSet) -> {
 			if (userChats.isLoaded()) {
 				userChats.removeAllChangeListeners();
 				setUpCurrentUser();
-				setUpView();
+				setUpMessage();
 			}
 		});
 	}
 
-	@SuppressLint("CheckResult")
 	private void setUpCurrentUser() {
 		currentUser = userChats
 				.where()
@@ -94,8 +94,7 @@ public class MessageFragment extends BaseFragment {
 				.findFirst();
 	}
 
-	@SuppressLint("CheckResult")
-	private void setUpView() {
+	private void setUpMessage() {
 		if (currentUser == null || !currentUser.isValid()) {
 			getMainActivity().logOutRealm();
 			return;

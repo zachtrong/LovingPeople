@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
+import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
 import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import butterknife.BindView;
@@ -78,18 +79,9 @@ public class UserChatsListRecyclerAdapter extends
 		}
 
 		private void updateStatus() {
-			AppUtils.d(item.getStatus());
-			switch (item.getStatus()) {
-				case USER_ONLINE:
-					imageViewOnlineIndicator.setImageResource(R.drawable.shape_bubble_online);
-					break;
-				case USER_OFFLINE:
-					imageViewOnlineIndicator.setImageResource(R.drawable.shape_bubble_offline);
-					break;
-				case USER_BUSY:
-					imageViewOnlineIndicator.setImageResource(R.drawable.shape_bubble_busy);
-					break;
-			}
+			imageViewOnlineIndicator.setImageResource(
+					UserHelper.getOnlineIndicatorResource(item.getStatus())
+			);
 		}
 
 		private void updateName() {

@@ -31,4 +31,6 @@
     <!--#92a4b6-->
     <color name="intro3">#00AA79</color>
     <color name="intro4">#E18335</color>
+
+    <color name="color_image_holder">#8db79b</color>
 </resources>

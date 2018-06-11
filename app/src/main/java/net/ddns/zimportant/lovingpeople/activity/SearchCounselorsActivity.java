@@ -25,6 +25,7 @@ import net.ddns.zimportant.lovingpeople.adapter.CounselorsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class SearchCounselorsActivity extends AppCompatActivity
 		implements SearchView.OnQueryTextListener {
@@ -89,6 +90,8 @@ public class SearchCounselorsActivity extends AppCompatActivity
 				.notEqualTo("id", SyncUser.current().getIdentity())
 				.and()
 				.equalTo("currentUserType", COUNSELOR)
+				.and()
+				.equalTo("status", USER_ONLINE)
 				.findAllAsync();
 	}
 

@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.fragment.HomeFragment;
 import net.ddns.zimportant.lovingpeople.fragment.MessageFragment;
+import net.ddns.zimportant.lovingpeople.fragment.ProfileCounselorFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
 import net.ddns.zimportant.lovingpeople.service.common.model.HomeItem;
@@ -42,6 +43,7 @@ import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.SUBSCRIPTION_USER_CHAT;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -187,7 +189,11 @@ public class MainActivity extends BaseActivity
 			case R.id.navigation_resource:
 				return new ResourceFragment();
 			case R.id.navigation_profile:
-				return new ProfileFragment();
+				if (currentUser.getUserType().equals(COUNSELOR)) {
+					return new ProfileCounselorFragment();
+				} else {
+					return new ProfileFragment();
+				}
 			default:
 				return new HomeFragment();
 		}

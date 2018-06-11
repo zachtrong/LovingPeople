@@ -12,7 +12,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.fragment.HomeFragment;
@@ -27,6 +31,7 @@ import javax.annotation.Nullable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.ObjectChangeSet;
 import io.realm.Realm;
 import io.realm.RealmModel;
@@ -45,8 +50,10 @@ public class MainActivity extends BaseActivity
 	NavigationView navigationView;
 	@BindView(R.id.drawer_layout)
 	DrawerLayout drawerLayout;
+	View headerView;
 
 	Realm realm;
+	UserChat currentUser;
 
 	public static void open(Context context) {
 		context.startActivity(new Intent(context, MainActivity.class));
@@ -67,7 +74,43 @@ public class MainActivity extends BaseActivity
 	private void setUpView() {
 		ButterKnife.bind(this);
 		navigationView.setNavigationItemSelectedListener(this);
+		setUpHeaderView();
 		onNavigationItemSelected(navigationView.getMenu().findItem(R.id.navigation_home));
+	}
+
+	private void setUpHeaderView() {
+		setUpCurrentUserInfo();
+		setUpChildHeaderView();
+	}
+
+	private void setUpCurrentUserInfo() {
+		 currentUser = realm
+				.where(UserChat.class)
+				.equalTo("id", SyncUser.current().getIdentity())
+				.findFirst();
+	}
+
+	private void setUpChildHeaderView() {
+		headerView = navigationView.getHeaderView(0);
+		setUpAvatar();
+		setUpUserName();
+		setUpUserId();
+	}
+
+	private void setUpAvatar() {
+		CircleImageView circleImageView = headerView.findViewById(R.id.civ_avatar);
+		Picasso.get().load(currentUser.getAvatarUrl()).into(circleImageView);
+
+	}
+
+	private void setUpUserName() {
+		TextView userName = headerView.findViewById(R.id.tv_name);
+		userName.setText(currentUser.getName());
+	}
+
+	private void setUpUserId() {
+		TextView userId = headerView.findViewById(R.id.tv_id);
+		userId.setText(currentUser.getId());
 	}
 
 	@Override

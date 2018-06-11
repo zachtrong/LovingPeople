@@ -12,8 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,12 +21,12 @@ import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 import net.ddns.zimportant.lovingpeople.R;
-import net.ddns.zimportant.lovingpeople.adapter.UserChatsListRecyclerAdapter;
+import net.ddns.zimportant.lovingpeople.adapter.CounselorsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 
-public class ListCounselorActivity extends AppCompatActivity
+public class SearchCounselorsActivity extends AppCompatActivity
 		implements SearchView.OnQueryTextListener {
 
 	@BindView(R.id.tb_search)
@@ -38,10 +36,10 @@ public class ListCounselorActivity extends AppCompatActivity
 
 	Realm realm;
 	RecyclerView.LayoutManager layoutManager;
-	UserChatsListRecyclerAdapter userChatsListRecyclerAdapter;
+	CounselorsRecyclerAdapter counselorsRecyclerAdapter;
 
 	public static void open(Context context) {
-		context.startActivity(new Intent(context, ListCounselorActivity.class));
+		context.startActivity(new Intent(context, SearchCounselorsActivity.class));
 	}
 
 	@Override
@@ -78,11 +76,11 @@ public class ListCounselorActivity extends AppCompatActivity
 	private void setUpRecyclerView() {
 
 		RealmResults<UserChat> items = getDefaultRealmResults();
-		userChatsListRecyclerAdapter = new UserChatsListRecyclerAdapter(items);
+		counselorsRecyclerAdapter = new CounselorsRecyclerAdapter(items);
 
 		layoutManager = new LinearLayoutManager(this);
 		recyclerView.setLayoutManager(layoutManager);
-		recyclerView.setAdapter(userChatsListRecyclerAdapter);
+		recyclerView.setAdapter(counselorsRecyclerAdapter);
 	}
 
 	private RealmResults<UserChat> getDefaultRealmResults() {
@@ -113,10 +111,10 @@ public class ListCounselorActivity extends AppCompatActivity
 
 	@Override
 	public boolean onQueryTextSubmit(String query) {
-		userChatsListRecyclerAdapter = new UserChatsListRecyclerAdapter(
+		counselorsRecyclerAdapter = new CounselorsRecyclerAdapter(
 				getRealmWithFilteredName(query)
 		);
-		recyclerView.setAdapter(userChatsListRecyclerAdapter);
+		recyclerView.setAdapter(counselorsRecyclerAdapter);
 		return false;
 	}
 
@@ -134,10 +132,10 @@ public class ListCounselorActivity extends AppCompatActivity
 	@Override
 	public boolean onQueryTextChange(String newText) {
 		if (newText.length() == 0) {
-			userChatsListRecyclerAdapter = new UserChatsListRecyclerAdapter(
+			counselorsRecyclerAdapter = new CounselorsRecyclerAdapter(
 					getDefaultRealmResults()
 			);
-			recyclerView.setAdapter(userChatsListRecyclerAdapter);
+			recyclerView.setAdapter(counselorsRecyclerAdapter);
 		}
 		return false;
 	}

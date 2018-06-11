@@ -14,7 +14,6 @@ import com.squareup.picasso.Picasso;
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
-import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,14 +22,12 @@ import io.realm.OrderedRealmCollection;
 import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
 
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_OFFLINE;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
+import static net.ddns.zimportant.lovingpeople.service.helper.UserHelper.joinRealmListString;
 
-public class UserChatsListRecyclerAdapter extends
-		RealmRecyclerViewAdapter<UserChat, UserChatsListRecyclerAdapter.UserChatViewHolder> {
+public class CounselorsRecyclerAdapter extends
+		RealmRecyclerViewAdapter<UserChat, CounselorsRecyclerAdapter.UserChatViewHolder> {
 
-	public UserChatsListRecyclerAdapter(@Nullable OrderedRealmCollection<UserChat> data) {
+	public CounselorsRecyclerAdapter(@Nullable OrderedRealmCollection<UserChat> data) {
 		super(data, true);
 	}
 
@@ -90,17 +87,6 @@ public class UserChatsListRecyclerAdapter extends
 
 		private void updateField() {
 			textViewField.setText(joinRealmListString(item.getFields()));
-		}
-
-		private String joinRealmListString(RealmList<String> fields) {
-			String res = "";
-			for (String field : fields) {
-				if (res.length() != 0) {
-					res = res.concat(", ");
-				}
-				res = res.concat(field);
-			}
-			return res;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:layout="http://schemas.android.com/tools"
     android:id="@id/dialogContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,50 +18,16 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         />
 
-    <FrameLayout
-        android:layout_below="@id/tb_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <include layout="@layout/common_profile"/>
 
-        <ImageView
-            android:id="@+id/iv_avatar_profile"
-            android:minHeight="200dp"
-            android:background="@color/color_image_holder"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:foreground="@drawable/dark_transparent_gradient"
-            android:layout_gravity="bottom"
-            android:lines="4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/tv_name_profile"
-            android:layout_gravity="bottom"
-            android:text="Name"
-            android:textSize="24sp"
-            android:textColor="#fff"
-            android:fontFamily="@font/lato_regular"
-            android:layout_marginStart="@dimen/text_margin"
-            android:layout_marginEnd="@dimen/text_margin"
-            android:layout_marginBottom="10dp"
-            android:paddingEnd="20dp"
-            android:maxLines="1"
-            android:textAllCaps="false"
-            android:ellipsize="end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <ImageView
-            android:id="@+id/onlineIndicator"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="@dimen/text_margin"
-            android:layout_marginBottom="14dp"
-            android:background="@drawable/shape_bubble_online"
-            />
-    </FrameLayout>
+    <Button
+        android:id="@+id/bt_register_profile"
+        android:layout_below="@id/fl_profile"
+        android:layout_centerHorizontal="true"
+        android:background="#00000000"
+        android:textColor="@color/colorAccent"
+        android:layout_marginTop="10dp"
+        android:text="Register Counselor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

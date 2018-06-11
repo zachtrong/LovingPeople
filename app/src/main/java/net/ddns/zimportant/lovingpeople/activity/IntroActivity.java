@@ -39,7 +39,6 @@ public class IntroActivity extends MaterialIntroActivity {
 
 	@Override
 	public void onFinish() {
-		//MainActivity.open(this);
 		super.onFinish();
 	}
 }

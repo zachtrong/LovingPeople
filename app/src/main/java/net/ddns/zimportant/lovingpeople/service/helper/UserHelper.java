@@ -2,6 +2,8 @@ package net.ddns.zimportant.lovingpeople.service.helper;
 
 import net.ddns.zimportant.lovingpeople.R;
 
+import io.realm.RealmList;
+
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_OFFLINE;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
@@ -17,5 +19,16 @@ public class UserHelper {
 				return R.drawable.shape_bubble_busy;
 		}
 		throw new Error("No such status");
+	}
+
+	public static String joinRealmListString(RealmList<String> fields) {
+		String res = "";
+		for (String field : fields) {
+			if (res.length() != 0) {
+				res = res.concat(", ");
+			}
+			res = res.concat(field);
+		}
+		return res;
 	}
 }

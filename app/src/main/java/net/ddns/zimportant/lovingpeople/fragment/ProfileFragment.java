@@ -2,7 +2,6 @@ package net.ddns.zimportant.lovingpeople.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.UserHandle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -18,15 +17,12 @@ import com.squareup.picasso.Picasso;
 import com.stfalcon.frescoimageviewer.ImageViewer;
 
 import net.ddns.zimportant.lovingpeople.R;
+import net.ddns.zimportant.lovingpeople.activity.RegisterCounselorActivity;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.OrderedCollectionChangeSet;
-import io.realm.OrderedRealmCollectionChangeListener;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.SyncUser;
@@ -41,9 +37,9 @@ public class ProfileFragment extends BaseFragment {
 	TextView nameTextView;
 	@BindView(R.id.onlineIndicator)
 	ImageView onlineIndicator;
+	Button buttonRegister;
 
 	Realm realm;
-	RealmResults<UserChat> userChats;
 	UserChat queryUser;
 	String queryId;
 
@@ -82,7 +78,8 @@ public class ProfileFragment extends BaseFragment {
 		super.onViewCreated(view, savedInstanceState);
 		setUpView(view);
 		setUpRealm();
-		setUpProfileAsync();
+		setUpCurrentUser();
+		setUpProfile();
 	}
 
 	private void setUpView(View view) {
@@ -93,24 +90,11 @@ public class ProfileFragment extends BaseFragment {
 
 	private void setUpRealm() {
 		realm = getMainActivity().getRealm();
-		userChats = realm
-				.where(UserChat.class)
-				.findAllAsync();
-	}
-
-	private void setUpProfileAsync() {
-		userChats.addChangeListener((userChats) -> {
-			if (userChats.isLoaded()) {
-				userChats.removeAllChangeListeners();
-				setUpCurrentUser();
-				setUpProfile();
-			}
-		});
 	}
 
 	private void setUpCurrentUser() {
-		queryUser = userChats
-				.where()
+		queryUser = realm
+				.where(UserChat.class)
 				.equalTo("id", queryId)
 				.findFirst();
 	}
@@ -119,6 +103,7 @@ public class ProfileFragment extends BaseFragment {
 		setUpAvatar();
 		setUpName();
 		setUpOnlineIndicator();
+		setUpUserAddition();
 	}
 
 	private void setUpAvatar() {
@@ -142,5 +127,12 @@ public class ProfileFragment extends BaseFragment {
 		onlineIndicator.setImageResource(
 				UserHelper.getOnlineIndicatorResource(queryUser.getStatus())
 		);
+	}
+
+	protected void setUpUserAddition() {
+		buttonRegister = getView().findViewById(R.id.bt_register_profile);
+		buttonRegister.setOnClickListener(v -> {
+			RegisterCounselorActivity.open(getContext());
+		});
 	}
 }

@@ -49,7 +49,6 @@ public class MainActivity extends BaseActivity
 	Realm realm;
 
 	public static void open(Context context) {
-		RealmHelper.setUpDefaultRealm();
 		context.startActivity(new Intent(context, MainActivity.class));
 	}
 

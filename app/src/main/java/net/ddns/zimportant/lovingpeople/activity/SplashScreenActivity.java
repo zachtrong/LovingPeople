@@ -17,12 +17,11 @@ public class SplashScreenActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 
 		if (SyncUser.current() != null) {
-			MainActivity.open(this);
+			PrepareActivity.open(this);
 		} else {
 			WelcomeActivity.open(this);
 		}
 		finish();
-
 		/*
 		TaskStackBuilder.create(this)
 				.addNextIntentWithParentStack(new Intent(this, MainActivity.class))

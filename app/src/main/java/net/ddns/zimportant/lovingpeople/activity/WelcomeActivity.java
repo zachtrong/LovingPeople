@@ -67,8 +67,9 @@ public class WelcomeActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_welcome);
 		if (SyncUser.current() != null) {
-			MainActivity.open(this);
+			PrepareActivity.open(this);
 			finish();
+			return;
 		}
 		ButterKnife.bind(this);
 
@@ -204,7 +205,8 @@ public class WelcomeActivity extends BaseActivity {
 					createUser();
 				}
 				isLockSwitchScreen = false;
-				MainActivity.open(WelcomeActivity.this);
+				PrepareActivity.open(WelcomeActivity.this);
+				finish();
 			});
 		}
 

@@ -1,6 +1,5 @@
 package net.ddns.zimportant.lovingpeople.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,11 +16,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import net.ddns.zimportant.lovingpeople.R;
-import net.ddns.zimportant.lovingpeople.activity.ListCounselorActivity;
+import net.ddns.zimportant.lovingpeople.activity.SearchCounselorsActivity;
 import net.ddns.zimportant.lovingpeople.adapter.ChatRoomsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,7 +45,6 @@ public class MessageFragment extends BaseFragment {
 	RecyclerView.LayoutManager layoutManager;
 	String buttonText;
 	String chatRoomRoleId;
-	RealmResults<UserChat> userChats;
 	UserChat currentUser;
 	boolean isShowFab;
 
@@ -66,30 +63,16 @@ public class MessageFragment extends BaseFragment {
 		super.setUpToolbar(toolbar);
 		setUpRealm();
 		setUpCurrentUser();
-		setUpMessageAsync();
+		setUpMessage();
 	}
 
 	private void setUpRealm() {
 		realm = getMainActivity().getRealm();
-
-		userChats = realm
-				.where(UserChat.class)
-				.findAllAsync();
-	}
-
-	private void setUpMessageAsync() {
-		userChats.addChangeListener((userChats, changeSet) -> {
-			if (userChats.isLoaded()) {
-				userChats.removeAllChangeListeners();
-				setUpCurrentUser();
-				setUpMessage();
-			}
-		});
 	}
 
 	private void setUpCurrentUser() {
-		currentUser = userChats
-				.where()
+		currentUser = realm
+				.where(UserChat.class)
 				.equalTo("id", SyncUser.current().getIdentity())
 				.findFirst();
 	}
@@ -172,7 +155,7 @@ public class MessageFragment extends BaseFragment {
 		if (isShowFab) {
 			fab.setVisibility(View.VISIBLE);
 			fab.setOnClickListener(view -> {
-				ListCounselorActivity.open(getContext());
+				SearchCounselorsActivity.open(getContext());
 			});
 		} else {
 			fab.setVisibility(View.GONE);

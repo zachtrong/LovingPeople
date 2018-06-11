@@ -23,8 +23,10 @@ import net.ddns.zimportant.lovingpeople.fragment.HomeFragment;
 import net.ddns.zimportant.lovingpeople.fragment.MessageFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
+import net.ddns.zimportant.lovingpeople.service.common.model.HomeItem;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.RealmHelper;
+import net.ddns.zimportant.lovingpeople.service.persistence.FixturesData;
 import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import javax.annotation.Nullable;
@@ -38,6 +40,8 @@ import io.realm.RealmModel;
 import io.realm.RealmObjectChangeListener;
 import io.realm.RealmResults;
 import io.realm.SyncUser;
+
+import static net.ddns.zimportant.lovingpeople.service.Constant.SUBSCRIPTION_USER_CHAT;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener {
@@ -146,9 +150,11 @@ public class MainActivity extends BaseActivity
 		SyncUser syncUser = SyncUser.current();
 		if (syncUser != null) {
 			syncUser.logOut();
-			Intent intent = new Intent(this, WelcomeActivity.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			realm.close();
+			Realm.deleteRealm(Realm.getDefaultConfiguration());
+			Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
 			startActivity(intent);
+			finish();
 		}
 	}
 

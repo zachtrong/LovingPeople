@@ -7,11 +7,15 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import net.ddns.zimportant.lovingpeople.R;
+import net.ddns.zimportant.lovingpeople.service.common.model.HomeItem;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.RealmHelper;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnLoadedCallback;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
+
+import static net.ddns.zimportant.lovingpeople.service.Constant.SUBSCRIPTION_USER_CHAT;
 
 public class PrepareActivity extends AppCompatActivity {
 
@@ -40,7 +44,7 @@ public class PrepareActivity extends AppCompatActivity {
 	private void setUpData(OnLoadedCallback callback) {
 		realm
 				.where(UserChat.class)
-				.findAllAsync()
+				.findAllAsync(SUBSCRIPTION_USER_CHAT)
 				.addChangeListener((realmModel) -> {
 					if (realmModel.isLoaded()) {
 						realmModel.removeAllChangeListeners();

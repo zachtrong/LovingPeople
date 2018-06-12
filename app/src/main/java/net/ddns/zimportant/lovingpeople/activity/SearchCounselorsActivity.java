@@ -128,7 +128,7 @@ public class SearchCounselorsActivity extends AppCompatActivity
 				.where(UserChat.class)
 				.notEqualTo("id", SyncUser.current().getIdentity())
 				.and()
-				.equalTo("currentUserType", COUNSELOR)
+				.equalTo("userType", COUNSELOR)
 				.and()
 				.contains("name", query, Case.INSENSITIVE)
 				.findAllAsync();

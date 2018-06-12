@@ -1,7 +1,10 @@
 package net.ddns.zimportant.lovingpeople.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +15,10 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import net.ddns.zimportant.lovingpeople.R;
+import net.ddns.zimportant.lovingpeople.activity.ConversationActivity;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
+import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +41,7 @@ public class CounselorsRecyclerAdapter extends
 	public UserChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		View v = LayoutInflater.from(parent.getContext())
 				.inflate(R.layout.item_counselor, parent, false);
-		return new UserChatViewHolder(v);
+		return new UserChatViewHolder(v, parent.getContext());
 	}
 
 	@Override
@@ -55,10 +60,12 @@ public class CounselorsRecyclerAdapter extends
 		ImageView imageViewOnlineIndicator;
 
 		UserChat item;
+		OnCreateConversation listener;
 
-		UserChatViewHolder(View itemView) {
+		UserChatViewHolder(View itemView, Context context) {
 			super(itemView);
 			ButterKnife.bind(this, itemView);
+			this.listener = (OnCreateConversation) context;
 		}
 
 		void setItem(UserChat item) {
@@ -67,6 +74,7 @@ public class CounselorsRecyclerAdapter extends
 			updateStatus();
 			updateName();
 			updateField();
+			updateOnClick();
 		}
 
 		private void updateAvatar() {
@@ -87,6 +95,12 @@ public class CounselorsRecyclerAdapter extends
 
 		private void updateField() {
 			textViewField.setText(joinRealmListString(item.getFields()));
+		}
+
+		private void updateOnClick() {
+			itemView.setOnClickListener(v -> {
+				listener.onCreateConversation(item.getId());
+			});
 		}
 	}
 }

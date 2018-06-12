@@ -24,29 +24,21 @@ import net.ddns.zimportant.lovingpeople.fragment.MessageFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileCounselorFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
-import net.ddns.zimportant.lovingpeople.service.common.model.HomeItem;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.helper.RealmHelper;
-import net.ddns.zimportant.lovingpeople.service.persistence.FixturesData;
-import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
-
-import javax.annotation.Nullable;
+import net.ddns.zimportant.lovingpeople.service.helper.RequestHelper;
+import net.ddns.zimportant.lovingpeople.service.interfaces.OnRequest;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.ObjectChangeSet;
 import io.realm.Realm;
-import io.realm.RealmModel;
-import io.realm.RealmObjectChangeListener;
-import io.realm.RealmResults;
 import io.realm.SyncUser;
 
-import static net.ddns.zimportant.lovingpeople.service.Constant.SUBSCRIPTION_USER_CHAT;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 
 public class MainActivity extends BaseActivity
-		implements NavigationView.OnNavigationItemSelectedListener {
+		implements NavigationView.OnNavigationItemSelectedListener,
+		OnRequest {
 
 	private static final int DELAY_CLOSE_DRAWER_MS = 100;
 
@@ -71,6 +63,7 @@ public class MainActivity extends BaseActivity
 		setContentView(R.layout.activity_main);
 		setUpRealm();
 		setUpView();
+		setUpUserRequest();
 	}
 
 	private void setUpRealm() {
@@ -117,12 +110,6 @@ public class MainActivity extends BaseActivity
 	private void setUpUserId() {
 		TextView userId = headerView.findViewById(R.id.tv_id);
 		userId.setText(currentUser.getId());
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		realm.close();
 	}
 
 	@Override
@@ -203,6 +190,19 @@ public class MainActivity extends BaseActivity
 		startFragment(navigationView.getMenu().findItem(R.id.navigation_message));
 	}
 
+	private void setUpUserRequest() {
+//		RequestHelper.getInstance()
+//				.register(this, realm);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+//		RequestHelper.getInstance()
+//				.close();
+		realm.close();
+	}
+
 	public ActionBarDrawerToggle registerDrawerToggle(Toolbar toolbar) {
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
 				this,
@@ -218,5 +218,10 @@ public class MainActivity extends BaseActivity
 
 	public void unRegisterDrawerToggle(ActionBarDrawerToggle drawerToggle) {
 		drawerLayout.removeDrawerListener(drawerToggle);
+	}
+
+	@Override
+	public void onRequest(UserChat userChat) {
+		// TODO user request
 	}
 }

@@ -29,6 +29,7 @@ public class UserChat extends RealmObject {
 
 	private RealmList<String> fields;
 	private String userRequestId;
+	private String connectedRoom;
 
 	public UserChat() {
 	}
@@ -40,6 +41,8 @@ public class UserChat extends RealmObject {
 		this.status = USER_ONLINE;
 		this.userType = STORYTELLER;
 		this.currentUserType = STORYTELLER;
+		this.userRequestId = "";
+		this.connectedRoom = "";
 	}
 
 	public String getId() {
@@ -105,4 +108,13 @@ public class UserChat extends RealmObject {
 	public void setUserRequestId(String userRequestId) {
 		this.userRequestId = userRequestId;
 	}
+
+	public String getConnectedRoom() {
+		return connectedRoom;
+	}
+
+	public void setConnectedRoom(String connectedRoom) {
+		this.connectedRoom = connectedRoom;
+	}
+
 }

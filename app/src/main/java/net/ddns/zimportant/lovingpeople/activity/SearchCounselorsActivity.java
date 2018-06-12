@@ -23,12 +23,14 @@ import io.realm.SyncUser;
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.adapter.CounselorsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
+import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
 
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class SearchCounselorsActivity extends AppCompatActivity
-		implements SearchView.OnQueryTextListener {
+		implements SearchView.OnQueryTextListener,
+		OnCreateConversation {
 
 	@BindView(R.id.tb_search)
 	Toolbar toolbar;
@@ -89,7 +91,7 @@ public class SearchCounselorsActivity extends AppCompatActivity
 				.where(UserChat.class)
 				.notEqualTo("id", SyncUser.current().getIdentity())
 				.and()
-				.equalTo("currentUserType", COUNSELOR)
+				.equalTo("userType", COUNSELOR)
 				.and()
 				.equalTo("status", USER_ONLINE)
 				.findAllAsync();
@@ -141,5 +143,14 @@ public class SearchCounselorsActivity extends AppCompatActivity
 			recyclerView.setAdapter(counselorsRecyclerAdapter);
 		}
 		return false;
+	}
+
+	@Override
+	public void onCreateConversation(String counselorId) {
+		ConversationActivity.open(
+				this,
+				SyncUser.current().getIdentity(),
+				counselorId
+		);
 	}
 }

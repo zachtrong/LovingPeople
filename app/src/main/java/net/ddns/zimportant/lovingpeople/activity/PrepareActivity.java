@@ -7,19 +7,18 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import net.ddns.zimportant.lovingpeople.R;
-import net.ddns.zimportant.lovingpeople.service.common.model.HomeItem;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.RealmHelper;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnLoadedCallback;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-
-import static net.ddns.zimportant.lovingpeople.service.Constant.SUBSCRIPTION_USER_CHAT;
 
 public class PrepareActivity extends AppCompatActivity {
 
 	Realm realm;
+	OnLoadedCallback callback;
 
 	public static void open(Context context) {
 		RealmHelper.setUpDefaultRealm();
@@ -42,16 +41,23 @@ public class PrepareActivity extends AppCompatActivity {
 	}
 
 	private void setUpData(OnLoadedCallback callback) {
+		this.callback = callback;
 		realm
 				.where(UserChat.class)
-				.findAllAsync(SUBSCRIPTION_USER_CHAT)
-				.addChangeListener((realmModel) -> {
-					if (realmModel.isLoaded()) {
-						realmModel.removeAllChangeListeners();
-						callback.onSuccess();
-					}
-				});
+				.findAllAsync()
+				.addChangeListener(realmChangeListener);
 	}
+
+	RealmChangeListener<RealmResults<UserChat>> realmChangeListener =
+			new RealmChangeListener<RealmResults<UserChat>>() {
+		@Override
+		public void onChange(RealmResults<UserChat> userChats) {
+			if (userChats.isLoaded()) {
+				userChats.removeChangeListener(this);
+				callback.onSuccess();
+			}
+		}
+	};
 
 	@Override
 	protected void onDestroy() {

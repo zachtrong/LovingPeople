@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import net.ddns.zimportant.lovingpeople.R;
@@ -16,6 +17,7 @@ public class ProfileCounselorFragment extends ProfileFragment {
 
 	TextView fieldsTextView;
 	TextView introduceTextView;
+	Button messageButton;
 
 	@Nullable
 	@Override
@@ -25,8 +27,14 @@ public class ProfileCounselorFragment extends ProfileFragment {
 
 	@Override
 	protected void setUpUserAddition() {
+		messageButton = getView().findViewById(R.id.bt_message);
 		fieldsTextView = getView().findViewById(R.id.tv_field);
 		introduceTextView = getView().findViewById(R.id.tv_introduce);
+
+		messageButton.setVisibility(View.GONE);
+		messageButton.setOnClickListener(v -> {
+			// TODO request user
+		});
 
 		fieldsTextView.setText(
 				UserHelper.joinRealmListString(queryUser.getFields())

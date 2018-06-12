@@ -25,8 +25,7 @@ public class ConversationActivity extends AppCompatActivity {
 	MessageInput messageInput;
 
 	public static void open(Context context) {
-		Intent i = new Intent(context, ConversationActivity.class);
-		context.startActivity(i);
+		context.startActivity(new Intent(context, ConversationActivity.class));
 	}
 
 	@Override

@@ -6,6 +6,7 @@
     <string name="title_resource">Resource</string>
     <string name="title_chatting">Chatting</string>
     <string name="title_search">Search</string>
+    <string name="title_register_counselor">Register Counselor</string>
 
     <string name="nav_header_title">Anonymous</string>
     <string name="nav_header_subtitle">id</string>
@@ -36,4 +37,7 @@
     <string name="action_logout">Logout</string>
     <string name="action_change_status">Change Status</string>
     <string name="loading">Loading...</string>
+    <string name="accept_privacy">I have read and agreed to the Privacy Policies</string>
+    <string name="accept_terms">I have read and agreed to the Terms and Conditions</string>
+
 </resources>

@@ -26,6 +26,7 @@ import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.RequestHelper;
+import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnRequest;
 
 import butterknife.BindView;
@@ -38,7 +39,7 @@ import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COU
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener,
-		OnRequest {
+		OnRequest, OnCreateConversation {
 
 	private static final int DELAY_CLOSE_DRAWER_MS = 100;
 
@@ -223,5 +224,10 @@ public class MainActivity extends BaseActivity
 	@Override
 	public void onRequest(UserChat userChat) {
 		// TODO user request
+	}
+
+	@Override
+	public void onCreateConversation(String storytellerId, String counselorId) {
+		ConversationActivity.open(this, storytellerId, counselorId);
 	}
 }

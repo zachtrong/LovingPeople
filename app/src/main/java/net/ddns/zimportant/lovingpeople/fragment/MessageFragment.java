@@ -16,10 +16,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import net.ddns.zimportant.lovingpeople.R;
+import net.ddns.zimportant.lovingpeople.activity.ConversationActivity;
 import net.ddns.zimportant.lovingpeople.activity.SearchCounselorsActivity;
 import net.ddns.zimportant.lovingpeople.adapter.ChatRoomsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
+import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
+import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversationCounselor;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

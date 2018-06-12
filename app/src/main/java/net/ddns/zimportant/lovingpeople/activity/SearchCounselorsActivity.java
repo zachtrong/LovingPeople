@@ -23,14 +23,14 @@ import io.realm.SyncUser;
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.adapter.CounselorsRecyclerAdapter;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
+import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversationCounselor;
 
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class SearchCounselorsActivity extends AppCompatActivity
 		implements SearchView.OnQueryTextListener,
-		OnCreateConversation {
+		OnCreateConversationCounselor {
 
 	@BindView(R.id.tb_search)
 	Toolbar toolbar;

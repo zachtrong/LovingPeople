@@ -1,9 +1,9 @@
 package net.ddns.zimportant.lovingpeople.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,25 +14,17 @@ import com.squareup.picasso.Picasso;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
-import net.ddns.zimportant.lovingpeople.service.common.model.Message;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
-import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
+import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
+import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversationCounselor;
 import net.ddns.zimportant.lovingpeople.service.utils.FormatUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.ObjectChangeSet;
-import io.realm.OrderedCollectionChangeSet;
 import io.realm.OrderedRealmCollection;
-import io.realm.OrderedRealmCollectionChangeListener;
-import io.realm.RealmList;
 import io.realm.RealmRecyclerViewAdapter;
-
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_OFFLINE;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class ChatRoomsRecyclerAdapter
 		extends RealmRecyclerViewAdapter<ChatRoom, ChatRoomsRecyclerAdapter.ChatRoomViewHolder> {
@@ -46,7 +38,7 @@ public class ChatRoomsRecyclerAdapter
 	public ChatRoomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		View v = LayoutInflater.from(parent.getContext())
 				.inflate(R.layout.item_chatroom, parent, false);
-		return new ChatRoomViewHolder(v);
+		return new ChatRoomViewHolder(v, parent.getContext());
 	}
 
 	@Override
@@ -54,7 +46,7 @@ public class ChatRoomsRecyclerAdapter
 		holder.setItem(getItem(position));
 	}
 
-	static class ChatRoomViewHolder extends RecyclerView.ViewHolder {
+	class ChatRoomViewHolder extends RecyclerView.ViewHolder {
 		@BindView(R.id.dialogAvatar)
 		CircleImageView imageView;
 		@BindView(R.id.onlineIndicator)
@@ -66,12 +58,16 @@ public class ChatRoomsRecyclerAdapter
 		@BindView(R.id.dialogDate)
 		TextView chatRoomLastDate;
 
+		View itemView;
 		ChatRoom chatRoom;
 		UserChat user;
+		OnCreateConversation listener;
 
-		ChatRoomViewHolder(View itemView) {
+		ChatRoomViewHolder(View itemView, Context context) {
 			super(itemView);
 			ButterKnife.bind(this, itemView);
+			this.itemView = itemView;
+			this.listener = (OnCreateConversation) context;
 		}
 
 		void setItem(ChatRoom chatRoom) {
@@ -95,6 +91,7 @@ public class ChatRoomsRecyclerAdapter
 						updateImageChatRoom();
 						updateOnlineIndicator();
 						updateChatRoomName();
+						updateOnClick();
 					});
 		}
 
@@ -135,6 +132,15 @@ public class ChatRoomsRecyclerAdapter
 			return FormatUtils.getDurationString(
 					chatRoom.getMessages().first().getCreatedAt()
 			);
+		}
+
+		private void updateOnClick() {
+			itemView.setOnClickListener(v -> {
+				listener.onCreateConversation(
+						chatRoom.getStorytellerId(),
+						chatRoom.getCounselorId()
+				);
+			});
 		}
 	}
 }

@@ -6,4 +6,5 @@ public final class Constant {
 	public static final String DEFAULT_REALM_URL = "realm://" + INSTANCE_ADDRESS + "/default";
 
 	public static final String SUBSCRIPTION_USER_CHAT = "UserChat";
+	public static final String PARTNER = "Partner";
 }

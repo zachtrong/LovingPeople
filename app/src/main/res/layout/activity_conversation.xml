@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/ab_conversation"
-        android:layout_above="@+id/input"
+        android:layout_above="@+id/fl_input_conversation"
         app:dateHeaderFormat="dd MMMM yyyy"
         app:incomingDefaultBubbleColor="@color/ivory"
         app:incomingDefaultBubblePressedColor="@color/ivory_dark"
@@ -49,22 +49,35 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_above="@+id/input"
+        android:layout_above="@+id/fl_input_conversation"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="@color/gray_light" />
 
-    <com.stfalcon.chatkit.messages.MessageInput
-        android:id="@+id/input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:attachmentButtonDefaultIconColor="@color/green"
-        app:attachmentButtonDefaultIconPressedColor="@color/green_dark"
-        app:inputButtonDefaultBgColor="@color/green"
-        app:inputButtonDefaultBgPressedColor="@color/green_dark"
-        app:inputCursorDrawable="@drawable/shape_custom_cursor"
-        app:inputHint="@string/hint_enter_a_message"
-        app:showAttachmentButton="true" />
 
+    <FrameLayout
+        android:id="@+id/fl_input_conversation"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.stfalcon.chatkit.messages.MessageInput
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:attachmentButtonDefaultIconColor="@color/green"
+            app:attachmentButtonDefaultIconPressedColor="@color/green_dark"
+            app:inputButtonDefaultBgColor="@color/green"
+            app:inputButtonDefaultBgPressedColor="@color/green_dark"
+            app:inputCursorDrawable="@drawable/shape_custom_cursor"
+            app:inputHint="@string/hint_enter_a_message"
+            app:showAttachmentButton="true" />
+
+        <Button
+            android:id="@+id/bt_connect"
+            android:background="#fff"
+            android:text="@string/connect"
+            android:textColor="@color/colorAccent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 </RelativeLayout>

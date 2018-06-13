@@ -152,5 +152,6 @@ public class SearchCounselorsActivity extends AppCompatActivity
 				SyncUser.current().getIdentity(),
 				counselorId
 		);
+		finish();
 	}
 }

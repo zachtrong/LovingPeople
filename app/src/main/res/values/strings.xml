@@ -40,6 +40,10 @@
     <string name="accept_privacy">I have read and agreed to the Privacy Policies</string>
     <string name="accept_terms">I have read and agreed to the Terms and Conditions</string>
 
+    <string name="connect">Connect to Chat</string>
+    <string name="connecting">Connecting</string>
+    <string name="connecting_to">Connecting to</string>
     <string name="connect_accept">Accept</string>
+    <string name="connect_cancel">Cancel</string>
     <string name="connect_decline">I\'m busy now</string>
 </resources>

@@ -25,7 +25,6 @@ import net.ddns.zimportant.lovingpeople.fragment.ProfileCounselorFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.helper.RequestHelper;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnRequest;
 
@@ -100,7 +99,6 @@ public class MainActivity extends BaseActivity
 	private void setUpAvatar() {
 		CircleImageView circleImageView = headerView.findViewById(R.id.civ_avatar);
 		Picasso.get().load(currentUser.getAvatarUrl()).into(circleImageView);
-
 	}
 
 	private void setUpUserName() {
@@ -109,7 +107,7 @@ public class MainActivity extends BaseActivity
 	}
 
 	private void setUpUserId() {
-		TextView userId = headerView.findViewById(R.id.tv_id);
+		TextView userId = headerView.findViewById(R.id.tv_name);
 		userId.setText(currentUser.getId());
 	}
 
@@ -200,7 +198,7 @@ public class MainActivity extends BaseActivity
 	protected void onDestroy() {
 		super.onDestroy();
 //		RequestHelper.getInstance()
-//				.close();
+//				.unRegister();
 		realm.close();
 	}
 

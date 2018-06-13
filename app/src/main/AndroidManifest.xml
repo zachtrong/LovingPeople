@@ -33,6 +33,7 @@
         <activity android:name=".activity.SearchCounselorsActivity"/>
         <activity android:name=".activity.RegisterCounselorActivity"/>
         <activity android:name=".activity.PrepareActivity"/>
+        <activity android:name=".activity.RequestConversationActivity"/>
     </application>
 
 </manifest>

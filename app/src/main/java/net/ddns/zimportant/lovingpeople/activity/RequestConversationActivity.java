@@ -98,6 +98,8 @@ public class RequestConversationActivity extends AppCompatActivity {
 			finishActivity("User Is Being Requested From Other");
 		} else if (currentUser.getUserRequestId().length() != 0) {
 			finishActivity("You Cannot Request Two Users At One Time");
+		} else if (currentUser.getConnectedRoom().length() != 0) {
+			finishActivity("You Cannot Request While Connecting With Other");
 		} else {
 			requestPartner();
 		}

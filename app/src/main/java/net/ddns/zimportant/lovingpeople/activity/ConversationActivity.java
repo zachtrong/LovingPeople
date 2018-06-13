@@ -101,7 +101,6 @@ public class ConversationActivity extends AppCompatActivity {
 				.and()
 				.equalTo("counselorId", counselorId)
 				.findFirst();
-		AppUtils.d(chatRoom == null ? "NULL" : chatRoom.toString());
 	}
 
 	private void setUpButton() {
@@ -117,7 +116,9 @@ public class ConversationActivity extends AppCompatActivity {
 	private boolean roomConnected() {
 		return chatRoom != null
 				&& storyteller.getConnectedRoom()
-				.equals(counselor.getConnectedRoom());
+				.equals(chatRoom.getId())
+				&& counselor.getConnectedRoom()
+				.equals(chatRoom.getId());
 	}
 
 	private void startActivityRequest() {

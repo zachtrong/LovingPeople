@@ -21,6 +21,7 @@ public class RequestHelper {
 	private UserChat currentUser;
 	private RealmResults<UserChat> currentUsers;
 	private OnRequest listener;
+	boolean isCleared = false;
 
 	@SuppressLint("CheckResult")
 	public void register(Context context, Realm realm) {
@@ -30,6 +31,7 @@ public class RequestHelper {
 		} catch (Exception e) {
 			throw new ClassCastException("Must implement OnRequest");
 		}
+
 		setUpCurrentUser();
 	}
 
@@ -50,11 +52,20 @@ public class RequestHelper {
 						.where()
 						.equalTo("id", SyncUser.current().getIdentity())
 						.findFirst();
-
-				setUpNotification();
+				clearRequestOnStartup();
+				//setUpNotification();
 			}
 		}
 	};
+
+	private void clearRequestOnStartup() {
+		if (!isCleared) {
+			isCleared = true;
+			realm.executeTransaction(bgRealm -> {
+				currentUser.setUserRequestId("");
+			});
+		}
+	}
 
 	private void setUpNotification() {
 		if (isRequesting()) {
@@ -83,7 +94,7 @@ public class RequestHelper {
 		return currentUser.getConnectedRoom().length() != 0;
 	}
 
-	public void close() {
+	public void unRegister() {
 		currentUsers.removeChangeListener(realmChangeListener);
 	}
 }

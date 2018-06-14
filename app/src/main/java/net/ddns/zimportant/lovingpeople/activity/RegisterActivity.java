@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RegisterCounselorActivity extends AppCompatActivity
+public class RegisterActivity extends AppCompatActivity
 		implements OnNotifyRegisterFragment {
 
 	@BindView(R.id.tb_register_counselor)
@@ -36,7 +36,7 @@ public class RegisterCounselorActivity extends AppCompatActivity
 	private int fragmentIndex = 0;
 
 	public static void open(Context context) {
-		context.startActivity(new Intent(context, RegisterCounselorActivity.class));
+		context.startActivity(new Intent(context, RegisterActivity.class));
 	}
 
 	@Override

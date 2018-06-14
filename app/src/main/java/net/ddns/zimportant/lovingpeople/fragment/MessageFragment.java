@@ -30,6 +30,8 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.SyncUser;
 
+import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
+import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
 
@@ -95,12 +97,12 @@ public class MessageFragment extends BaseFragment {
 		switch (currentUser.getCurrentUserType()) {
 			case STORYTELLER:
 				buttonText = "Switch to Counselor";
-				chatRoomRoleId = "storytellerId";
+				chatRoomRoleId = STORYTELLER_ID;
 				isShowFab = true;
 				break;
 			case COUNSELOR:
 				buttonText = "Switch to Storyteller";
-				chatRoomRoleId = "counselorId";
+				chatRoomRoleId = COUNSELOR_ID;
 				isShowFab = false;
 				break;
 		}

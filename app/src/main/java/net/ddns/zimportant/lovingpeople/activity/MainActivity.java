@@ -1,5 +1,6 @@
 package net.ddns.zimportant.lovingpeople.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,9 +26,10 @@ import net.ddns.zimportant.lovingpeople.fragment.ProfileCounselorFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.helper.RequestHelper;
+import net.ddns.zimportant.lovingpeople.service.helper.ResponseHelper;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
-import net.ddns.zimportant.lovingpeople.service.interfaces.OnRequest;
+import net.ddns.zimportant.lovingpeople.service.interfaces.OnResponse;
+import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,13 +37,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.Realm;
 import io.realm.SyncUser;
 
+import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
+import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
+import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener,
-		OnRequest, OnCreateConversation {
+		OnResponse, OnCreateConversation {
 
 	private static final int DELAY_CLOSE_DRAWER_MS = 100;
+	private static final int REQUEST_CODE = 1;
 
 	@BindView(R.id.fl_main)
 	FrameLayout frameLayout;
@@ -191,15 +198,13 @@ public class MainActivity extends BaseActivity
 	}
 
 	private void setUpUserRequest() {
-		RequestHelper.getInstance()
+		ResponseHelper.getInstance()
 				.register(this, realm);
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		RequestHelper.getInstance()
-				.unRegister();
 		realm.close();
 	}
 
@@ -221,12 +226,32 @@ public class MainActivity extends BaseActivity
 	}
 
 	@Override
-	public void onRequest(UserChat userChat) {
-		// TODO user request
+	public void onResponse(String partner) {
+		Intent intent = new Intent(this, ResponseActivity.class);
+		intent.putExtra(PARTNER, partner);
+		startActivityForResult(intent, REQUEST_CODE);
 	}
 
 	@Override
-	public void onCreateConversation(String storytellerId, String counselorId) {
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_CODE) {
+			if (resultCode == Activity.RESULT_OK) {
+				Bundle bundle = data.getExtras();
+
+				String error = bundle.getString("error");
+				if (error != null) {
+					AppUtils.showToast(this, error, true);
+				} else {
+					String storytellerId = bundle.getString(STORYTELLER_ID);
+					String counselorId = bundle.getString(COUNSELOR_ID);
+					ConversationActivity.open(this, storytellerId, counselorId);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onOpenConversation(String storytellerId, String counselorId) {
 		ConversationActivity.open(this, storytellerId, counselorId);
 	}
 }

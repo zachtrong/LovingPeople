@@ -17,14 +17,13 @@ import com.squareup.picasso.Picasso;
 import com.stfalcon.frescoimageviewer.ImageViewer;
 
 import net.ddns.zimportant.lovingpeople.R;
-import net.ddns.zimportant.lovingpeople.activity.RegisterCounselorActivity;
+import net.ddns.zimportant.lovingpeople.activity.RegisterActivity;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
-import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 public class ProfileFragment extends BaseFragment {
@@ -132,7 +131,7 @@ public class ProfileFragment extends BaseFragment {
 	protected void setUpUserAddition() {
 		buttonRegister = getView().findViewById(R.id.bt_register_profile);
 		buttonRegister.setOnClickListener(v -> {
-			RegisterCounselorActivity.open(getContext());
+			RegisterActivity.open(getContext());
 		});
 	}
 }

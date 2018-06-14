@@ -17,7 +17,6 @@ import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
-import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversationCounselor;
 import net.ddns.zimportant.lovingpeople.service.utils.FormatUtils;
 
 import butterknife.BindView;
@@ -136,7 +135,7 @@ public class ChatRoomsRecyclerAdapter
 
 		private void updateOnClick() {
 			itemView.setOnClickListener(v -> {
-				listener.onCreateConversation(
+				listener.onOpenConversation(
 						chatRoom.getStorytellerId(),
 						chatRoom.getCounselorId()
 				);

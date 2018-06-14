@@ -13,7 +13,6 @@ import android.widget.Button;
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.helper.RequestHelper;
 import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import com.stfalcon.chatkit.messages.MessageInput;
@@ -24,7 +23,9 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.SyncUser;
 
+import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
+import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
 
@@ -59,8 +60,8 @@ public class ConversationActivity extends AppCompatActivity {
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setUpLayout();
-		setUpUser();
 		setUpRealm();
+		setUpUser();
 		setUpConversation();
 		setUpButton();
 	}
@@ -79,7 +80,15 @@ public class ConversationActivity extends AppCompatActivity {
 
 	private void setUpUser() {
 		storytellerId = getIntent().getStringExtra(STORYTELLER);
+		storyteller = realm
+				.where(UserChat.class)
+				.equalTo("id", storytellerId)
+				.findFirst();
 		counselorId = getIntent().getStringExtra(COUNSELOR);
+		counselor = realm
+				.where(UserChat.class)
+				.equalTo("id", counselorId)
+				.findFirst();
 	}
 
 	private void setUpRealm() {
@@ -87,19 +96,11 @@ public class ConversationActivity extends AppCompatActivity {
 	}
 
 	private void setUpConversation() {
-		storyteller = realm
-				.where(UserChat.class)
-				.equalTo("id", storytellerId)
-				.findFirst();
-		counselor = realm
-				.where(UserChat.class)
-				.equalTo("id", counselorId)
-				.findFirst();
 		chatRoom = realm
 				.where(ChatRoom.class)
-				.equalTo("storytellerId", storytellerId)
+				.equalTo(STORYTELLER_ID, storytellerId)
 				.and()
-				.equalTo("counselorId", counselorId)
+				.equalTo(COUNSELOR_ID, counselorId)
 				.findFirst();
 	}
 
@@ -123,7 +124,7 @@ public class ConversationActivity extends AppCompatActivity {
 
 	private void startActivityRequest() {
 		Intent intent;
-		intent = new Intent(this, RequestConversationActivity.class);
+		intent = new Intent(this, RequestActivity.class);
 		intent.putExtra(PARTNER, getPartnerId());
 		startActivityForResult(intent, REQUEST_CODE);
 	}

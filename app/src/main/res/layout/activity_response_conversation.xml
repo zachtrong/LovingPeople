@@ -48,10 +48,10 @@
             android:layout_height="match_parent" />
 
         <Button
+            android:id="@+id/bt_accept"
             android:layout_weight="10"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:background="#00C76E"
             android:textColor="#fff"
             android:text="@string/connect_accept" />
@@ -62,11 +62,10 @@
             android:layout_height="match_parent" />
 
         <Button
+            android:id="@+id/bt_deny"
             android:layout_weight="10"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
             android:background="#ff5252"
             android:textColor="#fff"
             android:text="@string/connect_decline" />

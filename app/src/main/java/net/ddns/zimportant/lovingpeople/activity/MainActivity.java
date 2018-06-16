@@ -146,7 +146,7 @@ public class MainActivity extends BaseActivity
 		SyncUser syncUser = SyncUser.current();
 		if (syncUser != null) {
 			syncUser.logOut();
-			realm.close();
+			closeAllRealm();
 			Realm.deleteRealm(Realm.getDefaultConfiguration());
 			Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
 			startActivity(intent);
@@ -199,13 +199,19 @@ public class MainActivity extends BaseActivity
 
 	private void setUpUserRequest() {
 		ResponseHelper.getInstance()
-				.register(this, realm);
+				.register(this);
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		closeAllRealm();
+	}
+
+	private void closeAllRealm() {
 		realm.close();
+		ResponseHelper.getInstance()
+				.unregister();
 	}
 
 	public ActionBarDrawerToggle registerDrawerToggle(Toolbar toolbar) {

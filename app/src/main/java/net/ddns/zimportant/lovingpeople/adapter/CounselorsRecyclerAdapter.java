@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
+import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversationCounselor;
 
 import butterknife.BindView;
@@ -22,8 +22,7 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
-
-import static net.ddns.zimportant.lovingpeople.service.helper.UserHelper.joinRealmListString;
+import io.realm.RealmResults;
 
 public class CounselorsRecyclerAdapter extends
 		RealmRecyclerViewAdapter<UserChat, CounselorsRecyclerAdapter.UserChatViewHolder> {
@@ -54,6 +53,7 @@ public class CounselorsRecyclerAdapter extends
 		TextView textViewField;
 		@BindView(R.id.onlineIndicator)
 		ImageView imageViewOnlineIndicator;
+		boolean isSetUpAutoUpdateUser = false;
 
 		UserChat item;
 		OnCreateConversationCounselor listener;
@@ -66,31 +66,26 @@ public class CounselorsRecyclerAdapter extends
 
 		void setItem(UserChat item) {
 			this.item = item;
-			updateAvatar();
-			updateStatus();
-			updateName();
-			updateField();
-			updateOnClick();
+			if (!isSetUpAutoUpdateUser) {
+				isSetUpAutoUpdateUser = true;
+				setUpUser();
+				updateOnClick();
+			}
 		}
 
-		private void updateAvatar() {
-			Picasso.get()
-					.load(item.getAvatarUrl())
-					.into(avatar);
-		}
-
-		private void updateStatus() {
-			imageViewOnlineIndicator.setImageResource(
-					UserHelper.getOnlineIndicatorResource(item.getStatus())
-			);
-		}
-
-		private void updateName() {
-			textViewName.setText(item.getName());
-		}
-
-		private void updateField() {
-			textViewField.setText(joinRealmListString(item.getFields()));
+		private void setUpUser() {
+			RealmResults<UserChat> userRealmResults = item
+					.getRealm()
+					.where(UserChat.class)
+					.equalTo("id", item.getId())
+					.findAllAsync();
+			UserViewLoader userViewLoader = new UserViewLoader.Builder(userRealmResults)
+					.setAvatarView(avatar)
+					.setStatusView(imageViewOnlineIndicator)
+					.setNameView(textViewName)
+					.setFieldsView(textViewField)
+					.build();
+			userViewLoader.startListening();
 		}
 
 		private void updateOnClick() {

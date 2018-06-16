@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
+import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,12 +23,8 @@ import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANCEL;
-import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_REQUEST_MORE;
-import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CHAT_OTHER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_AVAILABLE;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class RequestActivity extends AppCompatActivity {
 
@@ -40,10 +37,11 @@ public class RequestActivity extends AppCompatActivity {
 
 	private String partnerId;
 	private String userId;
-	private Disposable checkPartner, responsePartner;
+	private Disposable checkPartner;
 	private UserChat partner, user;
 	private Realm realm;
 	private boolean isLoadedView = false;
+	private boolean isRequested = false;
 
 	// TODO: user request then offline :)
 
@@ -75,6 +73,24 @@ public class RequestActivity extends AppCompatActivity {
 
 	private void preparePartner() {
 		partnerId = getIntent().getExtras().getString(PARTNER);
+		setUpPartnerView();
+		setUpCheckPartner();
+	}
+
+	private void setUpPartnerView() {
+		RealmResults<UserChat> partnerRealmResults = realm
+				.where(UserChat.class)
+				.equalTo("id", partnerId)
+				.findAllAsync();
+		UserViewLoader userViewLoader = new UserViewLoader
+				.Builder(partnerRealmResults)
+				.setAvatarView(avatar)
+				.setNameView(nameTextView)
+				.build();
+		userViewLoader.startListening();
+	}
+
+	private void setUpCheckPartner() {
 		checkPartner = realm
 				.where(UserChat.class)
 				.equalTo("id", partnerId)
@@ -84,129 +100,64 @@ public class RequestActivity extends AppCompatActivity {
 				.subscribe(realmResults -> {
 					partner = realmResults.first();
 					checkPartnerAvailable();
+					if (isRequested) {
+						checkPartnerResponse();
+					}
 					if (!isLoadedView) {
 						isLoadedView = true;
-						setUpView();
-						setUpRequestPartner();
+						setUpButtonCancel();
+						startRequestPartner();
 					}
 				});
 	}
 
-	private void setUpView() {
-		setUpButton();
-		setUpUserView();
-	}
-
-	private void setUpButton() {
-		buttonCancel.setOnClickListener(v -> {
-			finishActivityError(ERR_USER_CANCEL);
-		});
-	}
-
-	private void setUpUserView() {
-		Picasso.get()
-				.load(partner.getAvatarUrl())
-				.into(avatar);
-		nameTextView.setText(partner.getName());
-	}
-
-	private void setUpRequestPartner() {
-		startRequestPartner();
-		listenChangePartner();
-	}
-
 	private void checkPartnerAvailable() {
-		if (partner.getConnectedRoom().length() != 0) {
-			finishActivityError(ERR_USER_CHAT_OTHER);
-		} else if (!partner.getStatus().equals(USER_ONLINE)) {
-			finishActivityError(ERR_USER_NOT_AVAILABLE);
-		} else if (partner.getUserRequestId().length() != 0
-				&& !partner.getUserRequestId().equals(userId)) {
-			finishActivityError(ERR_USER_NOT_AVAILABLE);
-		} else if (user.getUserRequestId().length() != 0
-				&& !user.getUserRequestId().equals(partnerId)) {
-			finishActivityError(ERR_USER_NOT_REQUEST_MORE);
-		} else if (user.getConnectedRoom().length() != 0) {
-			finishActivityError(ERR_USER_NOT_REQUEST_MORE);
+		if (partner == null) {
+			cancelRequest(ERR_USER_NOT_AVAILABLE);
+		} else if (isPartnerRequestOther()) {
+			cancelRequest(ERR_USER_NOT_AVAILABLE);
 		}
 	}
 
-	private void finishActivityError(@Nullable String error) {
-		clearListener();
-		clearRequestError();
-		Intent intent = new Intent();
-		intent.putExtra("error", error);
-		setResult(Activity.RESULT_OK, intent);
+	private boolean isPartnerRequestOther() {
+		return partner.getUserRequestId().length() != 0
+				&& !partner.getUserRequestId().equals(userId);
+	}
+
+	private void cancelRequest() {
+		cancelRequest(ERR_USER_CANCEL);
+	}
+
+	private void cancelRequest(String error) {
+		realm.executeTransaction(bgRealm -> {
+			user.setUserRequestId("");
+		});
+		Intent i = new Intent();
+		i.putExtra("error", error);
+		setResult(Activity.RESULT_OK, i);
 		finish();
 	}
 
-	private void clearListener() {
-		if (checkPartner != null && !checkPartner.isDisposed()) {
-			checkPartner.dispose();
-		}
-		if (responsePartner != null && !responsePartner.isDisposed()) {
-			responsePartner.dispose();
-		}
-	}
-
-	private void clearRequestError() {
-		realm.executeTransaction(bgRealm -> {
-			user.setUserRequestId("");
-			user.setStatus(USER_ONLINE);
-			partner.setUserRequestId("");
-		});
-	}
-
-	private void clearRequestSuccess() {
-		realm.executeTransaction(bgRealm -> {
-			user.setUserRequestId("");
-			partner.setUserRequestId("");
-		});
+	private void setUpButtonCancel() {
+		buttonCancel.setOnClickListener(v -> cancelRequest());
 	}
 
 	private void startRequestPartner() {
 		realm.executeTransaction(bgRealm -> {
-			user.setStatus(USER_BUSY);
-			user.setUserRequestId(partner.getId());
-			partner.setUserRequestId(user.getId());
+			user.setUserRequestId(partnerId);
 		});
+		isRequested = true;
 	}
 
-	private void listenChangePartner() {
-		responsePartner = realm
-				.where(UserChat.class)
-				.equalTo("id", partnerId)
-				.findAllAsync()
-				.asFlowable()
-				.filter(RealmResults::isLoaded)
-				.subscribe(realmResults -> {
-					partner = realmResults.first();
-
-					if (partner.getUserRequestId().equals(userId)) {
-						String chatRoomId = partner.getConnectedRoom();
-						if (chatRoomId.length() != 0) {
-							clearListener();
-							connectUserWithChatRoom(partner.getConnectedRoom());
-						}
-					} else {
-						finishActivityError(ERR_USER_NOT_AVAILABLE);
-					}
+	private void checkPartnerResponse() {
+		if (partner.getUserRequestId().equals(userId)) {
+			String partnerConnectedRoom = partner.getConnectedRoom();
+			if (partnerConnectedRoom.length() != 0) {
+				realm.executeTransaction(bgRealm -> {
+					user.setConnectedRoom(partnerConnectedRoom);
 				});
-	}
-
-	private void connectUserWithChatRoom(String chatRoomId) {
-		realm.executeTransactionAsync(bgRealm -> {
-			user.setConnectedRoom(chatRoomId);
-		}, this::finishActivitySuccess);
-	}
-
-	private void finishActivitySuccess() {
-		clearListener();
-		clearRequestSuccess();
-		Intent intent = new Intent();
-		intent.putExtra("error", (String) null);
-		setResult(Activity.RESULT_OK, intent);
-		finish();
+			}
+		}
 	}
 
 	@Override

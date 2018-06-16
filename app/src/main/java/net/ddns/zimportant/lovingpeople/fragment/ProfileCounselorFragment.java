@@ -1,6 +1,5 @@
 package net.ddns.zimportant.lovingpeople.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.ddns.zimportant.lovingpeople.R;
-import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
+import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 
 public class ProfileCounselorFragment extends ProfileFragment {
 
@@ -26,18 +25,7 @@ public class ProfileCounselorFragment extends ProfileFragment {
 	}
 
 	@Override
-	protected void setUpUserAddition() {
-		messageButton = getView().findViewById(R.id.bt_message);
-		fieldsTextView = getView().findViewById(R.id.tv_field);
-		introduceTextView = getView().findViewById(R.id.tv_introduce);
-
-		messageButton.setVisibility(View.GONE);
-		messageButton.setOnClickListener(v -> {
-			// TODO request user
-		});
-
-		fieldsTextView.setText(
-				UserHelper.joinRealmListString(queryUser.getFields())
-		);
+	protected void setUpProfile() {
+		// todo
 	}
 }

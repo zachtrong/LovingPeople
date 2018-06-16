@@ -1,6 +1,5 @@
 package net.ddns.zimportant.lovingpeople.activity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
+import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,7 +26,6 @@ import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANCEL;
-import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CHAT_OTHER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_AVAILABLE;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_STOP_REQUEST;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
@@ -34,7 +33,6 @@ import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class ResponseActivity extends AppCompatActivity {
 
@@ -72,11 +70,11 @@ public class ResponseActivity extends AppCompatActivity {
 	}
 
 	private void prepareRealmData() {
-		prepareCurrentUser();
-		preparePartnerUser();
+		prepareCurrent();
+		preparePartner();
 	}
 
-	private void prepareCurrentUser() {
+	private void prepareCurrent() {
 		userId = SyncUser.current().getIdentity();
 		user = realm
 				.where(UserChat.class)
@@ -84,8 +82,26 @@ public class ResponseActivity extends AppCompatActivity {
 				.findFirst();
 	}
 
-	private void preparePartnerUser() {
+	private void preparePartner() {
 		partnerId = getIntent().getExtras().getString(PARTNER);
+		setUpPartnerView();
+		setUpCheckPartner();
+	}
+
+	private void setUpPartnerView() {
+		RealmResults<UserChat> partnerRealmResults = realm
+				.where(UserChat.class)
+				.equalTo("id", partnerId)
+				.findAllAsync();
+		UserViewLoader userViewLoader = new UserViewLoader
+				.Builder(partnerRealmResults)
+				.setAvatarView(avatar)
+				.setNameView(nameTextView)
+				.build();
+		userViewLoader.startListening();
+	}
+
+	private void setUpCheckPartner() {
 		checkPartner = realm
 				.where(UserChat.class)
 				.equalTo("id", partnerId)
@@ -98,35 +114,17 @@ public class ResponseActivity extends AppCompatActivity {
 
 					if (!isLoadedView) {
 						isLoadedView = true;
-						setUpView();
+						setUpButtons();
 					}
 				});
 	}
 
 	private void checkPartnerAvailability() {
 		if (partner == null) {
-			finishActivityError(ERR_USER_NOT_AVAILABLE);
+			cancelRequest(ERR_USER_NOT_AVAILABLE);
 		} else if (!partner.getUserRequestId().equals(userId)) {
-			finishActivityError(ERR_USER_STOP_REQUEST);
-		} else if (partner.getConnectedRoom().length() != 0) {
-			finishActivityError(ERR_USER_CHAT_OTHER);
+			cancelRequest(ERR_USER_STOP_REQUEST);
 		}
-	}
-
-	private void setUpView() {
-		setUpAvatar();
-		setUpName();
-		setUpButtons();
-	}
-
-	private void setUpAvatar() {
-		Picasso.get()
-				.load(partner.getAvatarUrl())
-				.into(avatar);
-	}
-
-	private void setUpName() {
-		nameTextView.setText(partner.getName());
 	}
 
 	private void setUpButtons() {
@@ -143,10 +141,10 @@ public class ResponseActivity extends AppCompatActivity {
 	private void denyRequest() {
 		denyButton.setOnClickListener(v -> {});
 		acceptButton.setVisibility(View.GONE);
-		finishActivityError(ERR_USER_CANCEL);
+		cancelRequest(ERR_USER_CANCEL);
 	}
 
-	private void finishActivityError(@Nullable String error) {
+	private void cancelRequest(@Nullable String error) {
 		if (!checkPartner.isDisposed()) {
 			checkPartner.dispose();
 		}
@@ -155,18 +153,6 @@ public class ResponseActivity extends AppCompatActivity {
 		}, () -> {
 			Intent intent = new Intent();
 			intent.putExtra("error", error);
-			setResult(Activity.RESULT_OK, intent);
-			finish();
-		});
-	}
-
-	private void finishActivitySuccess() {
-		realm.executeTransactionAsync(bgRealm -> {
-			user.setStatus(USER_BUSY);
-		}, () -> {
-			Intent intent = new Intent();
-			intent.putExtra(COUNSELOR_ID, getCounselorId());
-			intent.putExtra(STORYTELLER_ID, getStorytellerId());
 			setResult(Activity.RESULT_OK, intent);
 			finish();
 		});
@@ -197,9 +183,7 @@ public class ResponseActivity extends AppCompatActivity {
 		if (!checkPartner.isDisposed()) {
 			checkPartner.dispose();
 		}
-		realm.executeTransaction(bgRealm -> {
-			user.setConnectedRoom(chatRoomId);
-		});
+
 		checkPartner = realm
 				.where(UserChat.class)
 				.equalTo("id", partnerId)
@@ -213,6 +197,22 @@ public class ResponseActivity extends AppCompatActivity {
 						checkPartner.dispose();
 					}
 				});
+		realm.executeTransaction(bgRealm -> {
+			user.setStatus(USER_BUSY);
+			user.setConnectedRoom(chatRoomId);
+		});
+	}
+
+	private void finishActivitySuccess() {
+		realm.executeTransactionAsync(bgRealm -> {
+			user.setStatus(USER_BUSY);
+		}, () -> {
+			Intent intent = new Intent();
+			intent.putExtra(COUNSELOR_ID, getCounselorId());
+			intent.putExtra(STORYTELLER_ID, getStorytellerId());
+			setResult(Activity.RESULT_OK, intent);
+			finish();
+		});
 	}
 
 	private void createChatRoom() {

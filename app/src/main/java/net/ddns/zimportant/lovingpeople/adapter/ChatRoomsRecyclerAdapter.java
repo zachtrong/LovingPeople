@@ -10,12 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
+import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
 import net.ddns.zimportant.lovingpeople.service.utils.FormatUtils;
 
@@ -24,6 +22,7 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmRecyclerViewAdapter;
+import io.realm.RealmResults;
 
 public class ChatRoomsRecyclerAdapter
 		extends RealmRecyclerViewAdapter<ChatRoom, ChatRoomsRecyclerAdapter.ChatRoomViewHolder> {
@@ -56,10 +55,10 @@ public class ChatRoomsRecyclerAdapter
 		TextView chatRoomLastMessage;
 		@BindView(R.id.dialogDate)
 		TextView chatRoomLastDate;
+		boolean isSetUpAutoUpdateUser = false;
 
 		View itemView;
 		ChatRoom chatRoom;
-		UserChat user;
 		OnCreateConversation listener;
 
 		ChatRoomViewHolder(View itemView, Context context) {
@@ -71,46 +70,33 @@ public class ChatRoomsRecyclerAdapter
 
 		void setItem(ChatRoom chatRoom) {
 			this.chatRoom = chatRoom;
-			updateLayout();
+			setUpLayout();
 		}
 
-		private void updateLayout() {
-			updateFromUser();
-			updateChatRoomInfo();
+		private void setUpLayout() {
+			if (!isSetUpAutoUpdateUser) {
+				isSetUpAutoUpdateUser = true;
+				setUpUser();
+				updateOnClick();
+			}
+			setUpChatRoom();
 		}
 
-		private void updateFromUser() {
-			chatRoom
+		private void setUpUser() {
+			RealmResults<UserChat> userRealmResults = chatRoom
 					.getRealm()
 					.where(UserChat.class)
 					.equalTo("id", chatRoom.getUserId())
-					.findFirstAsync()
-					.addChangeListener((UserChat realmModel) -> {
-						user = realmModel;
-						updateImageChatRoom();
-						updateOnlineIndicator();
-						updateChatRoomName();
-						updateOnClick();
-					});
+					.findAllAsync();
+			UserViewLoader userViewLoader = new UserViewLoader.Builder(userRealmResults)
+					.setAvatarView(imageView)
+					.setStatusView(onlineIndicatorView)
+					.setNameView(chatRoomName)
+					.build();
+			userViewLoader.startListening();
 		}
 
-		private void updateImageChatRoom() {
-			Picasso.get()
-					.load(user.getAvatarUrl())
-					.into(imageView);
-		}
-
-		private void updateOnlineIndicator() {
-			onlineIndicatorView.setImageResource(
-					UserHelper.getOnlineIndicatorResource(user.getStatus())
-			);
-		}
-
-		private void updateChatRoomName() {
-			chatRoomName.setText(user.getName());
-		}
-
-		private void updateChatRoomInfo() {
+		private void setUpChatRoom() {
 			if (chatRoom.getMessages().size() != 0) {
 				updateChatRoomLastMessage();
 				updateChatRoomLastDate();

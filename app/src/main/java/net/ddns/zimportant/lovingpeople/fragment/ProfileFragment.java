@@ -13,17 +13,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.squareup.picasso.Picasso;
 import com.stfalcon.frescoimageviewer.ImageViewer;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.activity.RegisterActivity;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.helper.UserHelper;
+import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 public class ProfileFragment extends BaseFragment {
@@ -77,8 +77,8 @@ public class ProfileFragment extends BaseFragment {
 		super.onViewCreated(view, savedInstanceState);
 		setUpView(view);
 		setUpRealm();
-		setUpCurrentUser();
 		setUpProfile();
+		setUpAvatar();
 	}
 
 	private void setUpView(View view) {
@@ -91,47 +91,31 @@ public class ProfileFragment extends BaseFragment {
 		realm = getMainActivity().getRealm();
 	}
 
-	private void setUpCurrentUser() {
-		queryUser = realm
+	protected void setUpProfile() {
+		RealmResults<UserChat> userRealmResults = realm
 				.where(UserChat.class)
 				.equalTo("id", queryId)
-				.findFirst();
-	}
+				.findAllAsync();
+		UserViewLoader userViewLoader = new UserViewLoader.Builder(userRealmResults)
+				.setAvatarView(avatarImageView)
+				.setNameView(nameTextView)
+				.setStatusView(onlineIndicator)
+				.build();
+		userViewLoader.startListening();
 
-	private void setUpProfile() {
-		setUpAvatar();
-		setUpName();
-		setUpOnlineIndicator();
-		setUpUserAddition();
+		buttonRegister = getView().findViewById(R.id.bt_register_profile);
+		buttonRegister.setOnClickListener(v -> {
+			RegisterActivity.open(getContext());
+		});
 	}
 
 	private void setUpAvatar() {
-		Picasso.get()
-				.load(queryUser.getAvatarUrl())
-				.into(avatarImageView);
 		avatarImageView.setOnClickListener(v -> {
 			String[] images = {queryUser.getAvatarUrl()};
 			new ImageViewer.Builder(getContext(), images)
 					.setStartPosition(0)
 					.build()
 					.show();
-		});
-	}
-
-	private void setUpName() {
-		nameTextView.setText(queryUser.getName());
-	}
-
-	private void setUpOnlineIndicator() {
-		onlineIndicator.setImageResource(
-				UserHelper.getOnlineIndicatorResource(queryUser.getStatus())
-		);
-	}
-
-	protected void setUpUserAddition() {
-		buttonRegister = getView().findViewById(R.id.bt_register_profile);
-		buttonRegister.setOnClickListener(v -> {
-			RegisterActivity.open(getContext());
 		});
 	}
 }

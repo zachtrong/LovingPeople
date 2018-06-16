@@ -20,25 +20,28 @@ public class ResponseHelper {
 	}
 
 	private Realm realm;
-	private UserChat user;
-	private Disposable checkUser, checkRequestUser;
+	private UserChat user, partner;
 	private OnResponse listener;
-	private boolean isClearedRequestOnStartup = false;
 
 	@SuppressLint("CheckResult")
-	public void register(Context context, Realm realm) {
-		this.realm = realm;
+	public void register(Context context) {
+		this.realm = Realm.getDefaultInstance();
 		try {
 			this.listener = (OnResponse) context;
 		} catch (Exception e) {
 			throw new ClassCastException("Must implement OnResponse");
 		}
 
-		setUpCurrentUser();
+		setUpUser();
+		setUpPartner();
 	}
 
-	private void setUpCurrentUser() {
-		checkUser = realm
+	private void setUpUser() {
+		user = realm
+				.where(UserChat.class)
+				.equalTo("id", SyncUser.current().getIdentity())
+				.findFirst();
+		Disposable checkUser = realm
 				.where(UserChat.class)
 				.equalTo("id", SyncUser.current().getIdentity())
 				.findAllAsync()
@@ -46,57 +49,38 @@ public class ResponseHelper {
 				.filter(RealmResults::isLoaded)
 				.subscribe(realmResults -> {
 					user = realmResults.first();
-					if (!isClearedRequestOnStartup) {
-						isClearedRequestOnStartup = true;
-						clearRequest();
-					}
-					setUpNotification();
 				});
 	}
 
-	private void clearRequest() {
-		realm.executeTransaction(bgRealm -> {
-			user.setUserRequestId("");
-		});
+	// TODO bug request again
+	private void setUpPartner() {
+		Disposable checkPartner = realm
+				.where(UserChat.class)
+				.notEqualTo("id", SyncUser.current().getIdentity())
+				.and()
+				.equalTo("userRequestId", SyncUser.current().getIdentity())
+				.findAllAsync()
+				.asFlowable()
+				.filter(RealmResults::isLoaded)
+				.filter(realmResults -> realmResults.size() != 0)
+				.subscribe(realmResults -> {
+					partner = realmResults.first();
+					onNotification();
+				});
 	}
 
-	private void setUpNotification() {
-		if (isOnline() && isRequesting()) {
-			if (!isConnected()) {
-				checkRequestUser();
-			}
-			else {
-				clearRequest();
+	private void onNotification() {
+		if (user.getStatus().equals(USER_ONLINE)) {
+			if (user.getUserRequestId().length() == 0) {
+				realm.executeTransaction(bgRealm -> {
+					user.setUserRequestId(partner.getId());
+				});
+				listener.onResponse(partner.getId());
 			}
 		}
 	}
 
-	private void checkRequestUser() {
-		checkRequestUser = realm
-				.where(UserChat.class)
-				.equalTo("id", user.getUserRequestId())
-				.findAllAsync()
-				.asFlowable()
-				.filter(RealmResults::isLoaded)
-				.subscribe(realmResults -> {
-					UserChat requestUser = realmResults.first();
-					if (!requestUser.getUserRequestId().equals(user.getId())) {
-						clearRequest();
-					} else {
-						listener.onResponse(requestUser.getId());
-					}
-				});
-	}
-
-	private boolean isOnline() {
-		return user.getStatus().equals(USER_ONLINE);
-	}
-
-	private boolean isRequesting() {
-		return user.getUserRequestId().length() != 0;
-	}
-
-	private boolean isConnected() {
-		return user.getConnectedRoom().length() != 0;
+	public void unregister() {
+		realm.close();
 	}
 }

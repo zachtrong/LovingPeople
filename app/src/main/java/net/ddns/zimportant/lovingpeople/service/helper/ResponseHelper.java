@@ -52,11 +52,12 @@ public class ResponseHelper {
 				});
 	}
 
-	// TODO bug request again
 	private void setUpPartner() {
 		Disposable checkPartner = realm
 				.where(UserChat.class)
 				.notEqualTo("id", SyncUser.current().getIdentity())
+				.and()
+				.notEqualTo("id", user.getUserRequestId())
 				.and()
 				.equalTo("userRequestId", SyncUser.current().getIdentity())
 				.findAllAsync()

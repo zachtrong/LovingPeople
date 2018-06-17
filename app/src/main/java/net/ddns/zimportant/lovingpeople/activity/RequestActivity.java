@@ -3,6 +3,7 @@ package net.ddns.zimportant.lovingpeople.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
@@ -27,6 +28,8 @@ import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_AVA
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
 
 public class RequestActivity extends AppCompatActivity {
+
+	public static final int TIMEOUT = 30;
 
 	@BindView(R.id.bt_cancel)
 	Button buttonCancel;
@@ -131,6 +134,7 @@ public class RequestActivity extends AppCompatActivity {
 	private void cancelRequest(String error) {
 		realm.executeTransaction(bgRealm -> {
 			user.setUserRequestId("");
+			partner.setUserRequestId("");
 		});
 		Intent i = new Intent();
 		i.putExtra("error", error);
@@ -139,6 +143,10 @@ public class RequestActivity extends AppCompatActivity {
 	}
 
 	private void setUpButtonCancel() {
+		final Handler handler = new Handler();
+		handler.postDelayed(() -> {
+			cancelRequest(ERR_USER_CANCEL);
+		}, TIMEOUT * 1000);
 		buttonCancel.setOnClickListener(v -> cancelRequest());
 	}
 
@@ -155,9 +163,18 @@ public class RequestActivity extends AppCompatActivity {
 			if (partnerConnectedRoom.length() != 0) {
 				realm.executeTransaction(bgRealm -> {
 					user.setConnectedRoom(partnerConnectedRoom);
+					user.setStatus(UserChat.USER_BUSY);
 				});
+				finishActivitySuccess();
 			}
 		}
+	}
+
+	private void finishActivitySuccess() {
+		Intent i = new Intent();
+		i.putExtra("error", (String) null);
+		setResult(Activity.RESULT_OK, i);
+		finish();
 	}
 
 	@Override

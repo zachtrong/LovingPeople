@@ -148,14 +148,14 @@ public class ResponseActivity extends AppCompatActivity {
 		if (!checkPartner.isDisposed()) {
 			checkPartner.dispose();
 		}
-		realm.executeTransactionAsync(bgRealm -> {
+		realm.executeTransaction(bgRealm -> {
 			user.setUserRequestId("");
-		}, () -> {
-			Intent intent = new Intent();
-			intent.putExtra("error", error);
-			setResult(Activity.RESULT_OK, intent);
-			finish();
+			partner.setUserRequestId("");
 		});
+		Intent intent = new Intent();
+		intent.putExtra("error", error);
+		setResult(Activity.RESULT_OK, intent);
+		finish();
 	}
 
 	private void setUpChatRoom() {
@@ -204,15 +204,12 @@ public class ResponseActivity extends AppCompatActivity {
 	}
 
 	private void finishActivitySuccess() {
-		realm.executeTransactionAsync(bgRealm -> {
-			user.setStatus(USER_BUSY);
-		}, () -> {
-			Intent intent = new Intent();
-			intent.putExtra(COUNSELOR_ID, getCounselorId());
-			intent.putExtra(STORYTELLER_ID, getStorytellerId());
-			setResult(Activity.RESULT_OK, intent);
-			finish();
-		});
+		realm.executeTransaction(bgRealm -> user.setStatus(USER_BUSY));
+		Intent intent = new Intent();
+		intent.putExtra(COUNSELOR_ID, getCounselorId());
+		intent.putExtra(STORYTELLER_ID, getStorytellerId());
+		setResult(Activity.RESULT_OK, intent);
+		finish();
 	}
 
 	private void createChatRoom() {

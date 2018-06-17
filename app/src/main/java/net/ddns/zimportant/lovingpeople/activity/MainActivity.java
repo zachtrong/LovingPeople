@@ -41,7 +41,6 @@ import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener,
@@ -59,7 +58,7 @@ public class MainActivity extends BaseActivity
 	View headerView;
 
 	Realm realm;
-	UserChat currentUser;
+	UserChat user;
 
 	public static void open(Context context) {
 		context.startActivity(new Intent(context, MainActivity.class));
@@ -91,7 +90,7 @@ public class MainActivity extends BaseActivity
 	}
 
 	private void setUpCurrentUserInfo() {
-		 currentUser = realm
+		 user = realm
 				.where(UserChat.class)
 				.equalTo("id", SyncUser.current().getIdentity())
 				.findFirst();
@@ -106,17 +105,17 @@ public class MainActivity extends BaseActivity
 
 	private void setUpAvatar() {
 		CircleImageView circleImageView = headerView.findViewById(R.id.civ_avatar);
-		Picasso.get().load(currentUser.getAvatarUrl()).into(circleImageView);
+		Picasso.get().load(user.getAvatarUrl()).into(circleImageView);
 	}
 
 	private void setUpUserName() {
 		TextView userName = headerView.findViewById(R.id.tv_name);
-		userName.setText(currentUser.getName());
+		userName.setText(user.getName());
 	}
 
 	private void setUpUserId() {
 		TextView userId = headerView.findViewById(R.id.tv_name);
-		userId.setText(currentUser.getId());
+		userId.setText(user.getId());
 	}
 
 	@Override
@@ -183,7 +182,7 @@ public class MainActivity extends BaseActivity
 			case R.id.navigation_resource:
 				return new ResourceFragment();
 			case R.id.navigation_profile:
-				if (currentUser.getUserType().equals(COUNSELOR)) {
+				if (user.getUserType().equals(COUNSELOR)) {
 					return new ProfileCounselorFragment();
 				} else {
 					return new ProfileFragment();

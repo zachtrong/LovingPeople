@@ -1,11 +1,13 @@
 package net.ddns.zimportant.lovingpeople.service.common.model;
 
+import com.stfalcon.chatkit.commons.models.IUser;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-public class UserChat extends RealmObject {
+public class UserChat extends RealmObject implements IUser {
 	public static final String STORYTELLER = "Storyteller";
 	public static final String COUNSELOR = "Counselor";
 	public static final String USER_OFFLINE = "Offline";
@@ -55,6 +57,11 @@ public class UserChat extends RealmObject {
 
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String getAvatar() {
+		return avatarUrl;
 	}
 
 	public void setName(String name) {

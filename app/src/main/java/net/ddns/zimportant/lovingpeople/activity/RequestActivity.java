@@ -25,6 +25,7 @@ import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANCEL;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_AVAILABLE;
+import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_REQUEST_MORE;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
 
 public class RequestActivity extends AppCompatActivity {
@@ -72,6 +73,15 @@ public class RequestActivity extends AppCompatActivity {
 				.where(UserChat.class)
 				.equalTo("id", userId)
 				.findFirst();
+		checkUserAvailable();
+	}
+
+	private void checkUserAvailable() {
+		if (user.getUserRequestId().length() != 0) {
+			cancelRequest(ERR_USER_NOT_REQUEST_MORE);
+		} else if (user.getConnectedRoom().length() != 0) {
+			cancelRequest(ERR_USER_NOT_REQUEST_MORE);
+		}
 	}
 
 	private void preparePartner() {

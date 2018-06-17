@@ -168,7 +168,10 @@ public class ResponseActivity extends AppCompatActivity {
 				.asFlowable()
 				.filter(RealmResults::isLoaded)
 				.subscribe(realmResults -> {
-					ChatRoom chatRoom = realmResults.first();
+					ChatRoom chatRoom = null;
+					if (realmResults.size() != 0) {
+						chatRoom = realmResults.first();
+					}
 
 					if (chatRoom != null) {
 						responseChatRoom(chatRoom.getId());

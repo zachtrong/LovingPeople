@@ -3,6 +3,7 @@ package net.ddns.zimportant.lovingpeople.service.common.model;
 import android.support.annotation.Nullable;
 
 import com.stfalcon.chatkit.commons.models.IMessage;
+import com.stfalcon.chatkit.commons.models.IUser;
 import com.stfalcon.chatkit.commons.models.MessageContentType;
 
 import java.util.Calendar;
@@ -13,7 +14,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-public class Message extends RealmObject {
+public class Message extends RealmObject implements IMessage {
 	@Required
 	@PrimaryKey
 	private String id;
@@ -35,6 +36,19 @@ public class Message extends RealmObject {
 
 	public String getId() {
 		return id;
+	}
+
+	@Override
+	public String getText() {
+		return body;
+	}
+
+	@Override
+	public IUser getUser() {
+		return getRealm()
+				.where(UserChat.class)
+				.equalTo("id", getAuthorId())
+				.findFirst();
 	}
 
 	public void setId(String id) {

@@ -3,6 +3,7 @@ package net.ddns.zimportant.lovingpeople.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +15,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ResourceFragment extends BaseFragment {
-	// TODO: ResourceFragment
 
 	@BindView(R.id.tb_resource)
 	Toolbar toolbar;
+	@BindView(R.id.rv_resource)
+	RecyclerView recyclerView;
 
 	@Nullable
 	@Override
@@ -30,5 +32,10 @@ public class ResourceFragment extends BaseFragment {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
 		setUpToolbar(toolbar);
+		setUpRecyclerView();
+	}
+
+	private void setUpRecyclerView() {
+
 	}
 }

@@ -59,7 +59,7 @@ public class UserViewLoader {
 				});
 	}
 
-	public int getOnlineIndicatorResource(String status) {
+	private int getOnlineIndicatorResource(String status) {
 		switch (status) {
 			case USER_ONLINE:
 				return R.drawable.shape_bubble_online;
@@ -71,7 +71,7 @@ public class UserViewLoader {
 		throw new Error("No such status");
 	}
 
-	public String joinRealmListString(RealmList<String> fields) {
+	private String joinRealmListString(RealmList<String> fields) {
 		String res = "";
 		for (String field : fields) {
 			if (res.length() != 0) {

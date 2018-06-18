@@ -45,7 +45,13 @@ public class MessagesListRealmAdapter implements MessagesListAdapter.OnLoadMoreL
 			OrderedCollectionChangeSet.Range[] deletions = changeSet.getDeletionRanges();
 			for (int i = deletions.length - 1; i >= 0; i--) {
 				OrderedCollectionChangeSet.Range range = deletions[i];
-				adapter.notifyItemRangeRemoved(range.startIndex, range.length);
+				List<Message> messageList = messages.subList(
+						range.startIndex,
+						range.startIndex + range.length
+				);
+				for (Message message : messageList) {
+					adapter.delete(message);
+				}
 			}
 
 			OrderedCollectionChangeSet.Range[] insertions = changeSet.getInsertionRanges();
@@ -61,7 +67,13 @@ public class MessagesListRealmAdapter implements MessagesListAdapter.OnLoadMoreL
 
 			OrderedCollectionChangeSet.Range[] modifications = changeSet.getChangeRanges();
 			for (OrderedCollectionChangeSet.Range range : modifications) {
-				adapter.notifyItemRangeChanged(range.startIndex, range.length);
+				List<Message> messageList = messages.subList(
+						range.startIndex,
+						range.length
+				);
+				for (Message message : messageList) {
+					adapter.update(message);
+				}
 			}
 		});
 	}
@@ -76,6 +88,5 @@ public class MessagesListRealmAdapter implements MessagesListAdapter.OnLoadMoreL
 
 	@Override
 	public void onLoadMore(int page, int totalItemsCount) {
-		// TODO
 	}
 }

@@ -15,10 +15,10 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         />
 
-    <TextView
-        android:text="RESOURCE"
-        android:gravity="center"
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/tb_resource"
+        android:id="@+id/rv_resource"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

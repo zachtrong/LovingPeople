@@ -17,7 +17,6 @@ import net.ddns.zimportant.lovingpeople.service.persistence.HomePostsData;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.OrderedRealmCollection;
-import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.SyncUser;
 
@@ -32,7 +31,7 @@ public class HomePostsRecyclerAdapter
 	@Override
 	public HomeItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		View v = LayoutInflater.from(parent.getContext())
-				.inflate(R.layout.item_post, parent, false);
+				.inflate(R.layout.item_home, parent, false);
 		return new HomeItemViewHolder(v);
 	}
 

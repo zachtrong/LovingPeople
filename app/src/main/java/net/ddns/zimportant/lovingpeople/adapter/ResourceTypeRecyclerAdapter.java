@@ -20,7 +20,7 @@ public class ResourceTypeRecyclerAdapter extends
 		RealmRecyclerViewAdapter<ResourceType, ResourceTypeRecyclerAdapter.ViewHolder>{
 
 	public ResourceTypeRecyclerAdapter(@Nullable OrderedRealmCollection<ResourceType> data) {
-		super(data, false);
+		super(data, true);
 	}
 
 	@NonNull

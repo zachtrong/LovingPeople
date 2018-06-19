@@ -10,7 +10,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.ddns.zimportant.lovingpeople.R;
+import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
+import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
+
+import io.realm.RealmResults;
 
 public class ProfileCounselorFragment extends ProfileFragment {
 
@@ -26,6 +30,20 @@ public class ProfileCounselorFragment extends ProfileFragment {
 
 	@Override
 	protected void setUpProfile() {
-		// todo
+		super.userRealmResults = realm
+				.where(UserChat.class)
+				.equalTo("id", queryId)
+				.findAllAsync();
+		UserViewLoader userViewLoader = new UserViewLoader.Builder(userRealmResults)
+				.setAvatarView(avatarImageView)
+				.setNameView(nameTextView)
+				.setStatusView(onlineIndicator)
+				.build();
+		userViewLoader.startListening();
+
+		messageButton = getView().findViewById(R.id.bt_message);
+		messageButton.setOnClickListener(v -> {
+			AppUtils.d("todo loading");
+		});
 	}
 }

@@ -19,6 +19,7 @@ import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.activity.RegisterActivity;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
+import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,8 +40,9 @@ public class ProfileFragment extends BaseFragment {
 	Button buttonRegister;
 
 	Realm realm;
-	UserChat queryUser;
 	String queryId;
+	RealmResults<UserChat> userRealmResults;
+	// TODO refactor
 
 	public static ProfileFragment newInstance(String queryId) {
 		ProfileFragment profileFragment = new ProfileFragment();
@@ -92,7 +94,7 @@ public class ProfileFragment extends BaseFragment {
 	}
 
 	protected void setUpProfile() {
-		RealmResults<UserChat> userRealmResults = realm
+		userRealmResults = realm
 				.where(UserChat.class)
 				.equalTo("id", queryId)
 				.findAllAsync();
@@ -111,11 +113,13 @@ public class ProfileFragment extends BaseFragment {
 
 	private void setUpAvatar() {
 		avatarImageView.setOnClickListener(v -> {
-			String[] images = {queryUser.getAvatarUrl()};
-			new ImageViewer.Builder(getContext(), images)
-					.setStartPosition(0)
-					.build()
-					.show();
+			if (userRealmResults.isLoaded()) {
+				String[] images = {userRealmResults.first().getAvatarUrl()};
+				new ImageViewer.Builder(getContext(), images)
+						.setStartPosition(0)
+						.build()
+						.show();
+			}
 		});
 	}
 }

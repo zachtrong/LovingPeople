@@ -114,7 +114,7 @@ public class MainActivity extends BaseActivity
 	}
 
 	private void setUpUserId() {
-		TextView userId = headerView.findViewById(R.id.tv_name);
+		TextView userId = headerView.findViewById(R.id.tv_id);
 		userId.setText(user.getId());
 	}
 

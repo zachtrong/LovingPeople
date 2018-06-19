@@ -1,6 +1,7 @@
 package net.ddns.zimportant.lovingpeople.service.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -12,19 +13,8 @@ public final class FormatUtils {
 		throw new AssertionError();
 	}
 
-	public static String getDurationString(int seconds) {
-		Date date = new Date(seconds * 1000);
-		return getDurationString(date, seconds);
-	}
-
 	public static String getDurationString(Date date) {
-		int seconds = (int) date.getTime() / 1000;
-		return getDurationString(date, seconds);
-	}
-
-	public static String getDurationString(Date date, int seconds) {
-		SimpleDateFormat formatter = new SimpleDateFormat(seconds >= 3600 ? "HH:mm:ss" : "mm:ss");
-		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
 		return formatter.format(date);
 	}
 }

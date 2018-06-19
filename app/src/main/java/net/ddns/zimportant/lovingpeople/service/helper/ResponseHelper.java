@@ -22,6 +22,7 @@ public class ResponseHelper {
 	private Realm realm;
 	private UserChat user, partner;
 	private OnResponse listener;
+	private Disposable checkUser, checkPartner;
 
 	@SuppressLint("CheckResult")
 	public void register(Context context) {
@@ -41,7 +42,7 @@ public class ResponseHelper {
 				.where(UserChat.class)
 				.equalTo("id", SyncUser.current().getIdentity())
 				.findFirst();
-		Disposable checkUser = realm
+		checkUser = realm
 				.where(UserChat.class)
 				.equalTo("id", SyncUser.current().getIdentity())
 				.findAllAsync()
@@ -53,7 +54,7 @@ public class ResponseHelper {
 	}
 
 	private void setUpPartner() {
-		Disposable checkPartner = realm
+		checkPartner = realm
 				.where(UserChat.class)
 				.notEqualTo("id", SyncUser.current().getIdentity())
 				.and()
@@ -82,6 +83,8 @@ public class ResponseHelper {
 	}
 
 	public void unregister() {
+		checkUser.dispose();
+		checkPartner.dispose();
 		realm.close();
 	}
 }

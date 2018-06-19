@@ -15,6 +15,7 @@ import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
+import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 import net.ddns.zimportant.lovingpeople.service.utils.FormatUtils;
 
 import butterknife.BindView;
@@ -115,7 +116,7 @@ public class ChatRoomsRecyclerAdapter
 
 		private String getFormatLastDate() {
 			return FormatUtils.getDurationString(
-					chatRoom.getMessages().first().getCreatedAt()
+					chatRoom.getMessages().last().getCreatedAt()
 			);
 		}
 

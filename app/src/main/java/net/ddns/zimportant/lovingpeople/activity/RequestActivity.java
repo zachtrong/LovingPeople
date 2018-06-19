@@ -142,10 +142,12 @@ public class RequestActivity extends AppCompatActivity {
 	}
 
 	private void cancelRequest(String error) {
-		realm.executeTransaction(bgRealm -> {
-			user.setUserRequestId("");
-			partner.setUserRequestId("");
-		});
+		if (user != null && partner != null) {
+			realm.executeTransaction(bgRealm -> {
+				user.setUserRequestId("");
+				partner.setUserRequestId("");
+			});
+		}
 		Intent i = new Intent();
 		i.putExtra("error", error);
 		setResult(Activity.RESULT_OK, i);

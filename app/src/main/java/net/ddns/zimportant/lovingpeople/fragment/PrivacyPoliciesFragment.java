@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnNotifyRegisterFragment;
@@ -24,6 +25,8 @@ public class PrivacyPoliciesFragment extends Fragment {
 	FloatingActionButton floatingActionButton;
 	@BindView(R.id.cb_privacy_policies)
 	CheckBox checkBox;
+	@BindView(R.id.tv_privacy_policies)
+	TextView textView;
 	boolean isChecked = false;
 
 	OnNotifyRegisterFragment callBackRegister;
@@ -50,6 +53,15 @@ public class PrivacyPoliciesFragment extends Fragment {
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
+
+		textView.setText("Lorem ipsum dolor sit amet, " +
+				"consectetur adipiscing elit, sed do eiusmod tempor incididunt " +
+				"ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
+				"quis nostrud exercitation ullamco laboris nisi ut aliquip ex " +
+				"ea commodo consequat. Duis aute irure dolor in reprehenderit in " +
+				"voluptate velit esse cillum dolore eu fugiat nulla pariatur. " +
+				"Excepteur sint occaecat cupidatat non proident, sunt in culpa " +
+				"qui officia deserunt mollit anim id est laborum.\"");
 
 		checkBox.setText(getResources().getString(R.string.accept_privacy));
 		checkBox.setOnClickListener(v -> {

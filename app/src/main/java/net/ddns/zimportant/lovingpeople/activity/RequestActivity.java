@@ -25,8 +25,10 @@ import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANCEL;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_AVAILABLE;
+import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_BOTH_COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_REQUEST_MORE;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class RequestActivity extends AppCompatActivity {
 
@@ -47,7 +49,8 @@ public class RequestActivity extends AppCompatActivity {
 	private boolean isLoadedView = false;
 	private boolean isRequested = false;
 
-	// TODO: user request then offline :)
+	private Handler handler;
+	private Runnable runnableDelay;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,7 +115,9 @@ public class RequestActivity extends AppCompatActivity {
 				.filter(RealmResults::isLoaded)
 				.subscribe(realmResults -> {
 					partner = realmResults.first();
-					checkPartnerAvailable();
+					if (!checkPartnerAvailable()) {
+						return;
+					}
 					if (isRequested) {
 						checkPartnerResponse();
 					}
@@ -124,12 +129,18 @@ public class RequestActivity extends AppCompatActivity {
 				});
 	}
 
-	private void checkPartnerAvailable() {
+	private boolean checkPartnerAvailable() {
 		if (partner == null) {
 			cancelRequest(ERR_USER_NOT_AVAILABLE);
+			return false;
 		} else if (isPartnerRequestOther()) {
 			cancelRequest(ERR_USER_NOT_AVAILABLE);
+			return false;
+		} else if (user.getCurrentUserType().equals(partner.getCurrentUserType())) {
+			cancelRequest(ERR_USER_NOT_BOTH_COUNSELOR);
+			return false;
 		}
+		return true;
 	}
 
 	private boolean isPartnerRequestOther() {
@@ -142,10 +153,20 @@ public class RequestActivity extends AppCompatActivity {
 	}
 
 	private void cancelRequest(String error) {
+		if (checkPartner != null && !checkPartner.isDisposed()) {
+			checkPartner.dispose();
+		}
+		if (handler != null) {
+			handler.removeCallbacks(runnableDelay);
+		}
 		if (user != null && partner != null) {
 			realm.executeTransaction(bgRealm -> {
 				user.setUserRequestId("");
 				partner.setUserRequestId("");
+			});
+		} else {
+			realm.executeTransaction(bgRealm -> {
+				user.setUserRequestId("");
 			});
 		}
 		Intent i = new Intent();
@@ -155,10 +176,10 @@ public class RequestActivity extends AppCompatActivity {
 	}
 
 	private void setUpButtonCancel() {
-		final Handler handler = new Handler();
+		handler = new Handler();
 		handler.postDelayed(() -> {
-			cancelRequest(ERR_USER_CANCEL);
 		}, TIMEOUT * 1000);
+		runnableDelay = () -> cancelRequest(ERR_USER_CANCEL);
 		buttonCancel.setOnClickListener(v -> cancelRequest());
 	}
 

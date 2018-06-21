@@ -9,8 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
@@ -70,11 +68,11 @@ public class ResponseActivity extends AppCompatActivity {
 	}
 
 	private void prepareRealmData() {
-		prepareCurrent();
+		prepareUser();
 		preparePartner();
 	}
 
-	private void prepareCurrent() {
+	private void prepareUser() {
 		userId = SyncUser.current().getIdentity();
 		user = realm
 				.where(UserChat.class)

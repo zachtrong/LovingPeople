@@ -25,8 +25,8 @@ public class ResponseHelper {
 	private Disposable checkUser, checkPartner;
 
 	@SuppressLint("CheckResult")
-	public void register(Context context) {
-		this.realm = Realm.getDefaultInstance();
+	public void register(Context context, Realm realm) {
+		this.realm = realm;
 		try {
 			this.listener = (OnResponse) context;
 		} catch (Exception e) {

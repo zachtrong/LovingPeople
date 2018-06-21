@@ -27,6 +27,7 @@ import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.ResponseHelper;
+import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnResponse;
 import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
@@ -34,7 +35,9 @@ import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.reactivex.disposables.Disposable;
 import io.realm.Realm;
+import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
@@ -46,7 +49,7 @@ public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener,
 		OnResponse, OnCreateConversation {
 
-	private static final int DELAY_CLOSE_DRAWER_MS = 100;
+	private static final int DELAY_CLOSE_DRAWER_MS = 200;
 	private static final int REQUEST_CODE = 1;
 
 	@BindView(R.id.fl_main)
@@ -98,47 +101,23 @@ public class MainActivity extends BaseActivity
 
 	private void setUpChildHeaderView() {
 		headerView = navigationView.getHeaderView(0);
-		setUpAvatar();
-		setUpUserName();
-		setUpUserId();
-	}
-
-	private void setUpAvatar() {
+		RealmResults<UserChat> userChats = realm
+				.where(UserChat.class)
+				.equalTo("id", user.getId())
+				.findAllAsync();
 		CircleImageView circleImageView = headerView.findViewById(R.id.civ_avatar);
-		Picasso.get().load(user.getAvatarUrl()).into(circleImageView);
-	}
-
-	private void setUpUserName() {
 		TextView userName = headerView.findViewById(R.id.tv_name);
-		userName.setText(user.getName());
-	}
-
-	private void setUpUserId() {
 		TextView userId = headerView.findViewById(R.id.tv_id);
-		userId.setText(user.getId());
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_home, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.action_logout) {
-			logOutRealm();
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
+		UserViewLoader userViewLoader = new UserViewLoader.Builder(userChats)
+				.setAvatarView(circleImageView)
+				.setNameView(userName)
+				.setIdView(userId)
+				.build();
+		userViewLoader.startListening();
 	}
 
 	public Realm getRealm() {
 		return realm;
-	}
-
-	public void setRealm(Realm realm) {
-		this.realm = realm;
 	}
 
 	public void logOutRealm() {
@@ -182,7 +161,7 @@ public class MainActivity extends BaseActivity
 			case R.id.navigation_resource:
 				return new ResourceFragment();
 			case R.id.navigation_profile:
-				if (user.getUserType().equals(COUNSELOR)) {
+				if (user.getCurrentUserType().equals(COUNSELOR)) {
 					return new ProfileCounselorFragment();
 				} else {
 					return new ProfileFragment();
@@ -196,9 +175,13 @@ public class MainActivity extends BaseActivity
 		startFragment(navigationView.getMenu().findItem(R.id.navigation_message));
 	}
 
+	public void restartProfileFragment() {
+		startFragment(navigationView.getMenu().findItem(R.id.navigation_profile));
+	}
+
 	private void setUpUserRequest() {
 		ResponseHelper.getInstance()
-				.register(this);
+				.register(this, realm);
 	}
 
 	@Override
@@ -209,8 +192,6 @@ public class MainActivity extends BaseActivity
 
 	private void closeAllRealm() {
 		realm.close();
-		ResponseHelper.getInstance()
-				.unregister();
 	}
 
 	public ActionBarDrawerToggle registerDrawerToggle(Toolbar toolbar) {

@@ -19,7 +19,7 @@ import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USE
 public class UserViewLoader {
 
 	private RealmResults<UserChat> user;
-	private TextView name, id, fields;
+	private TextView name, id, fields, introduce, birth, address, experience;
 	private ImageView avatar, status;
 
 	UserViewLoader(Builder builder) {
@@ -29,6 +29,10 @@ public class UserViewLoader {
 		this.fields = builder.fields;
 		this.status = builder.status;
 		this.avatar = builder.avatar;
+		this.introduce = builder.introduce;
+		this.birth = builder.birth;
+		this.address = builder.address;
+		this.experience = builder.experience;
 	}
 
 	public void startListening() {
@@ -55,6 +59,18 @@ public class UserViewLoader {
 					}
 					if (fields != null) {
 						fields.setText(joinRealmListString(userChat.getFields()));
+					}
+					if (introduce != null) {
+						introduce.setText(userChat.getIntroduce());
+					}
+					if (birth != null) {
+						birth.setText(userChat.getBirth());
+					}
+					if (address != null) {
+						address.setText(userChat.getAddress());
+					}
+					if (experience != null) {
+						experience.setText(userChat.getExperience());
 					}
 				});
 	}
@@ -84,7 +100,7 @@ public class UserViewLoader {
 
 	public static class Builder {
 		RealmResults<UserChat> userChats;
-		TextView name, id, fields;
+		TextView name, id, fields, introduce, birth, address, experience;
 		ImageView status, avatar;
 
 		public Builder(RealmResults<UserChat> userChats) {
@@ -113,6 +129,25 @@ public class UserViewLoader {
 
 		public Builder setAvatarView(ImageView v) {
 			avatar = v;
+			return this;
+		}
+		public Builder setIntroduceView(TextView v) {
+			introduce = v;
+			return this;
+		}
+
+		public Builder setBirthView(TextView v) {
+			birth = v;
+			return this;
+		}
+
+		public Builder setAddressView(TextView v) {
+			address = v;
+			return this;
+		}
+
+		public Builder setExperienceView(TextView v) {
+			experience = v;
 			return this;
 		}
 

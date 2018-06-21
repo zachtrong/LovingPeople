@@ -14,4 +14,8 @@ public final class Constant {
 	public static final String ERR_USER_NOT_REQUEST_MORE = "You cannot chat with two people at one time";
 	public static final String ERR_USER_CANCEL = "Cancelled request";
 	public static final String ERR_USER_STOP_REQUEST = "Sorry, this person has stopped the request";
+	public static final String ERR_USER_CANNOT_CHANGE_STATUS = "You cannot change status while connecting with another";
+	public static final String ERR_USER_NOT_BOTH_COUNSELOR = "You cannot both Counselor yet";
+
+	public static final String ERR_ADD_INFO = "Please add this information";
 }

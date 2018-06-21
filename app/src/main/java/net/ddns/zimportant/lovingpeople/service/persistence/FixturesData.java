@@ -19,7 +19,7 @@ public class FixturesData {
 		return homePostContentData;
 	}
 
-	static ArrayList<String> homePostContentData = new ArrayList<String>() {
+	private static ArrayList<String> homePostContentData = new ArrayList<String>() {
 		{
 			add("Depression distorts your thinking. When you are depressed, your mind can play tricks on you. If you have thoughts of suicide, please call someone immediately. Don't let a temporary glitch in your thinking cause you to harm yourself or another.");
 			add("Depression makes it hard to give. It's very hard to think of other people when you're wrapped in a prickly blanket of sadness, and all you can think about is your own pain. Be proactive and just a few steps you need to heal. Try reading a book to help you understand what you are going through and how best to deal with it.");
@@ -37,21 +37,15 @@ public class FixturesData {
 	static ArrayList<String> colors = new ArrayList<String>() {
 		{
 			add("#f44336");
-			add("#E91E63");
-			add("#9C27B0");
-			add("#673AB7");
-			add("#3F51B5");
-			add("#2196F3");
-			add("#03A9F4");
-			add("#00BCD4");
+			add("#e91e63");
+			add("#9c27b0");
+			add("#673ab7");
+			add("#2196f3");
 			add("#009688");
-			add("#4CAF50");
-			add("#8BC34A");
-			add("#FFC107");
-			add("#FF9800");
-			add("#FF5722");
-			add("#795548");
-			add("#607D8B");
+			add("#4caf50");
+			add("#ff9800");
+			add("#ff5722");
+			add("#607d8b");
 		}
 	};
 

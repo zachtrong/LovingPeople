@@ -47,4 +47,11 @@
     <string name="connect_accept">Accept</string>
     <string name="connect_cancel">Cancel</string>
     <string name="connect_decline">I\'m busy now</string>
+
+    <string name="register_name">Full name</string>
+    <string name="register_introduce">Introduce</string>
+    <string name="register_fields">Best fields (OCD, Depression, …)</string>
+    <string name="register_birth">Year of Birth</string>
+    <string name="register_address">Address</string>
+    <string name="register_experience">Experience in Mental Health</string>
 </resources>

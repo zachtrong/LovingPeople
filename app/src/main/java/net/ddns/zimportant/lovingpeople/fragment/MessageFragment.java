@@ -1,6 +1,7 @@
 package net.ddns.zimportant.lovingpeople.fragment;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,6 +25,7 @@ import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversationCounselor;
+import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,9 +34,14 @@ import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
+import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANNOT_CHANGE_STATUS;
+import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CHAT_OTHER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_OFFLINE;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class MessageFragment extends BaseFragment {
 
@@ -43,12 +51,9 @@ public class MessageFragment extends BaseFragment {
 	RecyclerView chatRoomRecyclerView;
 	@BindView(R.id.fab_message)
 	FloatingActionButton fab;
-	@BindView(R.id.bt_message)
-	Button switchCurrentUserButton;
 
 	Realm realm;
 	RecyclerView.LayoutManager layoutManager;
-	String buttonText;
 	String chatRoomRoleId;
 	UserChat currentUser;
 	boolean isShowFab;
@@ -88,7 +93,6 @@ public class MessageFragment extends BaseFragment {
 			return;
 		}
 		setUpInformation();
-		setUpSwitchButton();
 		setUpRecyclerView();
 		setUpFab();
 	}
@@ -96,48 +100,14 @@ public class MessageFragment extends BaseFragment {
 	private void setUpInformation() {
 		switch (currentUser.getCurrentUserType()) {
 			case STORYTELLER:
-				buttonText = "Switch to Counselor";
-				chatRoomRoleId = STORYTELLER_ID;
+				chatRoomRoleId = "storytellerId";
 				isShowFab = true;
 				break;
 			case COUNSELOR:
-				buttonText = "Switch to Storyteller";
-				chatRoomRoleId = COUNSELOR_ID;
+				chatRoomRoleId = "counselorId";
 				isShowFab = false;
 				break;
 		}
-	}
-
-	protected void setUpSwitchButton() {
-		switchCurrentUserButton.setText(buttonText);
-		switchCurrentUserButton.setOnClickListener(v -> {
-			if (currentUser.getUserType().equals(STORYTELLER)) {
-				createAlertDialog();
-				return;
-			}
-
-			if (currentUser.getCurrentUserType().equals(STORYTELLER)) {
-				switchCurrentUser(COUNSELOR);
-			} else {
-				switchCurrentUser(STORYTELLER);
-			}
-		});
-	}
-
-	private void createAlertDialog() {
-		new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Dialog_Alert)
-				.setTitle("Notification")
-				.setMessage("You are not Counselor yet. Please go to Profile to register")
-				.setPositiveButton("OK", null)
-				.show();
-	}
-
-	private void switchCurrentUser(String userRole) {
-		realm.removeAllChangeListeners();
-		realm.executeTransaction(bgRealm -> {
-			currentUser.setCurrentUserType(userRole);
-		});
-		getMainActivity().restartMessageFragment();
 	}
 
 	private void setUpRecyclerView() {
@@ -177,6 +147,41 @@ public class MessageFragment extends BaseFragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.menu_message, menu);
 		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.action_change_status) {
+			startDialogChangeStatus();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void startDialogChangeStatus() {
+		String[] statusList = {USER_ONLINE, USER_BUSY, USER_OFFLINE};
+		new AlertDialog.Builder(getContext())
+				.setTitle("Change Status")
+				.setSingleChoiceItems(statusList, 0, null)
+				.setPositiveButton("OK", (dialog, whichButton) -> {
+					dialog.dismiss();
+					int selectedPosition = ((AlertDialog)dialog)
+							.getListView()
+							.getCheckedItemPosition();
+					if (realm != null) {
+						if (currentUser.getConnectedRoom().length() == 0) {
+							realm.executeTransaction(bgRealm -> {
+								currentUser.setStatus(statusList[selectedPosition]);
+							});
+						} else {
+							AppUtils.showToast(
+									getContext(),
+									ERR_USER_CANNOT_CHANGE_STATUS,
+									true
+							);
+						}
+					}
+				})
+				.show();
 	}
 
 	@Override

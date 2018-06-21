@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,13 +22,14 @@ import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.activity.RegisterActivity;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
-import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.SyncUser;
+
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 
 public class ProfileFragment extends BaseFragment {
 
@@ -42,7 +46,6 @@ public class ProfileFragment extends BaseFragment {
 	Realm realm;
 	String queryId;
 	RealmResults<UserChat> userRealmResults;
-	// TODO refactor
 
 	public static ProfileFragment newInstance(String queryId) {
 		ProfileFragment profileFragment = new ProfileFragment();
@@ -59,6 +62,7 @@ public class ProfileFragment extends BaseFragment {
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 		Bundle args = getArguments();
 		if (args != null) {
 			queryId = getArguments().getString("id");
@@ -94,6 +98,10 @@ public class ProfileFragment extends BaseFragment {
 	}
 
 	protected void setUpProfile() {
+		UserChat user = realm
+				.where(UserChat.class)
+				.equalTo("id", queryId)
+				.findFirst();
 		userRealmResults = realm
 				.where(UserChat.class)
 				.equalTo("id", queryId)
@@ -105,9 +113,16 @@ public class ProfileFragment extends BaseFragment {
 				.build();
 		userViewLoader.startListening();
 
-		buttonRegister = getView().findViewById(R.id.bt_register_profile);
+		buttonRegister = getView().findViewById(R.id.bt_become_counselor);
 		buttonRegister.setOnClickListener(v -> {
-			RegisterActivity.open(getContext());
+			if (user.getUserType().equals(COUNSELOR)) {
+				realm.executeTransaction(bgRealm -> {
+					user.setCurrentUserType(COUNSELOR);
+					getMainActivity().restartProfileFragment();
+				});
+			} else {
+				RegisterActivity.open(getContext());
+			}
 		});
 	}
 
@@ -121,5 +136,19 @@ public class ProfileFragment extends BaseFragment {
 						.show();
 			}
 		});
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_profile, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.action_logout) {
+			getMainActivity().logOutRealm();
+		}
+		return true;
 	}
 }

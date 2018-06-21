@@ -18,74 +18,107 @@
 
     <include layout="@layout/common_profile"/>
 
-    <Button
-        android:id="@+id/bt_message"
-        android:layout_marginTop="@dimen/text_margin"
-        android:layout_centerHorizontal="true"
-        android:paddingStart="@dimen/text_margin"
-        android:paddingEnd="@dimen/text_margin"
-        android:layout_below="@id/fl_profile"
-        android:textColor="@color/colorAccent"
-        android:text="Message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
     <ScrollView
-        android:layout_below="@id/bt_message"
+        android:layout_below="@id/fl_profile"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-            android:layout_marginTop="@dimen/text_margin"
+            android:layout_marginTop="10dp"
             android:paddingStart="@dimen/text_margin"
             android:paddingEnd="@dimen/text_margin"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <Button
+                android:id="@+id/bt_message"
+                android:paddingStart="@dimen/text_margin"
+                android:paddingEnd="@dimen/text_margin"
+                android:textColor="@color/colorAccent"
+                android:layout_gravity="center_horizontal"
+                android:text="Message"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/bt_become_storyteller"
+                android:paddingStart="@dimen/text_margin"
+                android:paddingEnd="@dimen/text_margin"
+                android:textColor="@color/colorAccent"
+                android:layout_gravity="center_horizontal"
+                android:text="Become Storyteller"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
             <TextView
-                android:text="Introduce"
+                android:text="@string/register_introduce"
+                android:textSize="@dimen/text_normal"
+                android:fontFamily="@font/lato_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="2dp" />
             <TextView
                 android:id="@+id/tv_introduce"
+                android:textSize="@dimen/text_normal"
+                android:fontFamily="@font/lato_regular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
             <TextView
-                android:text="Fields"
-                android:layout_below="@id/bt_message"
+                android:text="@string/register_birth"
+                android:textSize="@dimen/text_normal"
+                android:fontFamily="@font/lato_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="2dp" />
             <TextView
-                android:id="@+id/tv_field"
-                android:text=""
+                android:id="@+id/tv_birth"
+                android:textSize="@dimen/text_normal"
+                android:fontFamily="@font/lato_regular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
             <TextView
-                android:text="Date of Birth"
+                android:textSize="@dimen/text_normal"
+                android:fontFamily="@font/lato_black"
+                android:text="@string/register_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="2dp" />
             <TextView
+                android:textSize="@dimen/text_normal"
+                android:id="@+id/tv_address"
+                android:fontFamily="@font/lato_regular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
             <TextView
-                android:text="Occupation"
+                android:textSize="@dimen/text_normal"
+                android:fontFamily="@font/lato_black"
+                android:text="@string/register_experience"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <TextView
+            <Space
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="2dp" />
             <TextView
-                android:text="Location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:text="Experience in Mental Health"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
+                android:id="@+id/tv_experience"
+                android:textSize="@dimen/text_normal"
+                android:fontFamily="@font/lato_regular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>

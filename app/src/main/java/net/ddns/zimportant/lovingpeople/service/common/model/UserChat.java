@@ -33,6 +33,11 @@ public class UserChat extends RealmObject implements IUser {
 	private String userRequestId;
 	private String connectedRoom;
 
+	private String introduce;
+	private String birth;
+	private String address;
+	private String experience;
+
 	public UserChat() {
 	}
 
@@ -56,7 +61,11 @@ public class UserChat extends RealmObject implements IUser {
 	}
 
 	public String getName() {
-		return name;
+		if (currentUserType.equals(COUNSELOR)) {
+			return name;
+		} else {
+			return "Anonymous".concat(id);
+		}
 	}
 
 	@Override
@@ -124,4 +133,35 @@ public class UserChat extends RealmObject implements IUser {
 		this.connectedRoom = connectedRoom;
 	}
 
+	public String getIntroduce() {
+		return introduce;
+	}
+
+	public void setIntroduce(String introduce) {
+		this.introduce = introduce;
+	}
+
+	public String getBirth() {
+		return birth;
+	}
+
+	public void setBirth(String birth) {
+		this.birth = birth;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getExperience() {
+		return experience;
+	}
+
+	public void setExperience(String experience) {
+		this.experience = experience;
+	}
 }

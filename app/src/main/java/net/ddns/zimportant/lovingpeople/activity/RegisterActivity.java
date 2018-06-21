@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.fragment.PrivacyPoliciesFragment;
 import net.ddns.zimportant.lovingpeople.fragment.TermsConditionsFragment;
+import net.ddns.zimportant.lovingpeople.fragment.UpdateInformationFragment;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnNotifyRegisterFragment;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity
 	ArrayList<Class> fragments = new ArrayList<Class>() {{
 		add(PrivacyPoliciesFragment.class);
 		add(TermsConditionsFragment.class);
+		add(UpdateInformationFragment.class);
 	}};
 	private int fragmentIndex = 0;
 

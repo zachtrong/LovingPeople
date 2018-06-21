@@ -268,6 +268,8 @@ public class ConversationActivity extends AppCompatActivity
 				counselor.setStatus(USER_ONLINE);
 			});
 			restartActivity();
+		} else {
+			AppUtils.showToast(this, "You haven't connected yet", true);
 		}
 	}
 }

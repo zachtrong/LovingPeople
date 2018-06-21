@@ -48,6 +48,7 @@ dependencies {
     compile 'com.github.medyo:fancybuttons:1.8.4'
     implementation 'com.github.stfalcon:chatkit:0.2.2'
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+    implementation 'com.github.pchmn:MaterialChipsInput:1.0.8'
 
     implementation 'io.realm:realm-annotations-processor:5.2.0'
     implementation 'io.realm:android-adapters:3.0.0'

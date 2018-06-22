@@ -26,8 +26,10 @@ import io.realm.SyncUser;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANCEL;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_AVAILABLE;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_BOTH_COUNSELOR;
+import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_BOTH_STORYTELLER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_REQUEST_MORE;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class RequestActivity extends AppCompatActivity {
@@ -136,8 +138,14 @@ public class RequestActivity extends AppCompatActivity {
 		} else if (isPartnerRequestOther()) {
 			cancelRequest(ERR_USER_NOT_AVAILABLE);
 			return false;
-		} else if (user.getCurrentUserType().equals(partner.getCurrentUserType())) {
-			cancelRequest(ERR_USER_NOT_BOTH_COUNSELOR);
+		} else if (user.getCurrentUserType()
+				.equals(partner.getCurrentUserType())) {
+
+			if (user.getCurrentUserType().equals(COUNSELOR)) {
+				cancelRequest(ERR_USER_NOT_BOTH_COUNSELOR);
+			} else {
+				cancelRequest(ERR_USER_NOT_BOTH_STORYTELLER);
+			}
 			return false;
 		}
 		return true;

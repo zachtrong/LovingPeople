@@ -44,6 +44,7 @@
                 android:layout_gravity="bottom"
                 android:layout_margin="@dimen/card_title_margin"
                 android:text="this is content, this is content, this is content, this is content, this is content"
+                android:autoLink="all"
                 android:fontFamily="@font/lato_regular"
                 android:textColor="#3d3d3d"
                 android:textSize="16sp" />

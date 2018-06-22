@@ -7,12 +7,14 @@
 
 <ImageView
     android:id="@+id/iv_avatar_profile"
-    android:minHeight="200dp"
-    android:background="@color/color_image_holder"
+    android:src="@drawable/img_profile_placeholder"
+    android:background="@null"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    android:clickable="true"
     android:scaleType="fitCenter"
     android:adjustViewBounds="true"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content"/>
 <TextView
     android:foreground="@drawable/dark_transparent_gradient"
     android:layout_gravity="bottom"

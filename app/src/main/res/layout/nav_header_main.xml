@@ -14,6 +14,7 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/civ_avatar"
+        android:src="@drawable/img_profile_placeholder"
         android:layout_width="@dimen/dialog_avatar_width"
         android:layout_height="@dimen/dialog_avatar_height"
         android:contentDescription="@string/nav_header_desc"

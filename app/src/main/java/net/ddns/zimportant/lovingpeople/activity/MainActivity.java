@@ -11,20 +11,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import net.ddns.zimportant.lovingpeople.R;
+import net.ddns.zimportant.lovingpeople.fragment.MessageStorytellerFragment;
 import net.ddns.zimportant.lovingpeople.fragment.HomeFragment;
-import net.ddns.zimportant.lovingpeople.fragment.MessageFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileCounselorFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
+import net.ddns.zimportant.lovingpeople.fragment.ProfileStorytellerFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
+import net.ddns.zimportant.lovingpeople.fragment.MessageCounselorFragment;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.ResponseHelper;
 import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
@@ -35,7 +34,6 @@ import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.reactivex.disposables.Disposable;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.SyncUser;
@@ -43,7 +41,7 @@ import io.realm.SyncUser;
 import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
 
 public class MainActivity extends BaseActivity
 		implements NavigationView.OnNavigationItemSelectedListener,
@@ -157,14 +155,18 @@ public class MainActivity extends BaseActivity
 			case R.id.navigation_home:
 				return new HomeFragment();
 			case R.id.navigation_message:
-				return new MessageFragment();
+				if (user.getCurrentUserType().equals(STORYTELLER)) {
+					return new MessageCounselorFragment();
+				} else {
+					return new MessageStorytellerFragment();
+				}
 			case R.id.navigation_resource:
 				return new ResourceFragment();
 			case R.id.navigation_profile:
-				if (user.getCurrentUserType().equals(COUNSELOR)) {
-					return new ProfileCounselorFragment();
+				if (user.getCurrentUserType().equals(STORYTELLER)) {
+					return new ProfileStorytellerFragment();
 				} else {
-					return new ProfileFragment();
+					return new ProfileCounselorFragment();
 				}
 			default:
 				return new HomeFragment();

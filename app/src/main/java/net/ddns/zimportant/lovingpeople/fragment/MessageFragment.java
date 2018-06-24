@@ -43,7 +43,7 @@ import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USE
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_OFFLINE;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
-public class MessageFragment extends BaseFragment {
+public abstract class MessageFragment extends BaseFragment {
 
 	@BindView(R.id.tb_message)
 	Toolbar toolbar;
@@ -97,18 +97,7 @@ public class MessageFragment extends BaseFragment {
 		setUpFab();
 	}
 
-	private void setUpInformation() {
-		switch (currentUser.getCurrentUserType()) {
-			case STORYTELLER:
-				chatRoomRoleId = "storytellerId";
-				isShowFab = true;
-				break;
-			case COUNSELOR:
-				chatRoomRoleId = "counselorId";
-				isShowFab = false;
-				break;
-		}
-	}
+	protected abstract void setUpInformation();
 
 	private void setUpRecyclerView() {
 		RealmResults<ChatRoom> items = getRealmResults();

@@ -31,7 +31,7 @@ import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 
-public class ProfileFragment extends BaseFragment {
+public abstract class ProfileFragment extends BaseFragment {
 
 	@BindView(R.id.tb_profile)
 	Toolbar toolbar;
@@ -47,8 +47,13 @@ public class ProfileFragment extends BaseFragment {
 	String queryId;
 	RealmResults<UserChat> userRealmResults;
 
-	public static ProfileFragment newInstance(String queryId) {
-		ProfileFragment profileFragment = new ProfileFragment();
+	public static ProfileFragment newInstance(String queryId, String type) {
+		ProfileFragment profileFragment;
+		if (type.equals(COUNSELOR)) {
+			profileFragment = new ProfileCounselorFragment();
+		} else {
+			profileFragment = new ProfileStorytellerFragment();
+		}
 		Bundle args = new Bundle();
 		args.putString("id", queryId);
 		profileFragment.setArguments(args);
@@ -97,34 +102,7 @@ public class ProfileFragment extends BaseFragment {
 		realm = getMainActivity().getRealm();
 	}
 
-	protected void setUpProfile() {
-		UserChat user = realm
-				.where(UserChat.class)
-				.equalTo("id", queryId)
-				.findFirst();
-		userRealmResults = realm
-				.where(UserChat.class)
-				.equalTo("id", queryId)
-				.findAllAsync();
-		UserViewLoader userViewLoader = new UserViewLoader.Builder(userRealmResults)
-				.setAvatarView(avatarImageView)
-				.setNameView(nameTextView)
-				.setStatusView(onlineIndicator)
-				.build();
-		userViewLoader.startListening();
-
-		buttonRegister = getView().findViewById(R.id.bt_become_counselor);
-		buttonRegister.setOnClickListener(v -> {
-			if (user.getUserType().equals(COUNSELOR)) {
-				realm.executeTransaction(bgRealm -> {
-					user.setCurrentUserType(COUNSELOR);
-					getMainActivity().restartProfileFragment();
-				});
-			} else {
-				RegisterActivity.open(getContext());
-			}
-		});
-	}
+	protected abstract void setUpProfile();
 
 	private void setUpAvatar() {
 		avatarImageView.setOnClickListener(v -> {

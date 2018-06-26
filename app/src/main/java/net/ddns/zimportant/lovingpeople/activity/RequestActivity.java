@@ -3,6 +3,7 @@ package net.ddns.zimportant.lovingpeople.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +43,8 @@ public class RequestActivity extends AppCompatActivity {
 	TextView nameTextView;
 	@BindView(R.id.civ_avatar)
 	CircleImageView avatar;
+	@BindView(R.id.tv_timeout_second)
+	TextView timeout;
 
 	private String partnerId;
 	private String userId;
@@ -50,8 +53,8 @@ public class RequestActivity extends AppCompatActivity {
 	private Realm realm;
 	private boolean isLoadedView = false;
 	private boolean isRequested = false;
+	private CountDownTimer countDownTimer;
 
-	private Handler handler;
 	private Runnable runnableDelay;
 
 	@Override
@@ -164,8 +167,8 @@ public class RequestActivity extends AppCompatActivity {
 		if (checkPartner != null && !checkPartner.isDisposed()) {
 			checkPartner.dispose();
 		}
-		if (handler != null) {
-			handler.removeCallbacks(runnableDelay);
+		if (countDownTimer != null) {
+			countDownTimer.cancel();
 		}
 		if (user != null && partner != null) {
 			realm.executeTransaction(bgRealm -> {
@@ -184,10 +187,19 @@ public class RequestActivity extends AppCompatActivity {
 	}
 
 	private void setUpButtonCancel() {
-		handler = new Handler();
-		handler.postDelayed(() -> {
-		}, TIMEOUT * 1000);
-		runnableDelay = () -> cancelRequest(ERR_USER_CANCEL);
+		timeout.setText(TIMEOUT);
+		countDownTimer =
+				new CountDownTimer(TIMEOUT * 1000, 1000) {
+			@Override
+			public void onTick(long millisUntilFinished) {
+				timeout.setText((int) millisUntilFinished);
+			}
+
+			@Override
+			public void onFinish() {
+				cancelRequest(ERR_USER_CANCEL);
+			}
+		}.start();
 		buttonCancel.setOnClickListener(v -> cancelRequest());
 	}
 

@@ -156,9 +156,9 @@ public class MainActivity extends BaseActivity
 				return new HomeFragment();
 			case R.id.navigation_message:
 				if (user.getCurrentUserType().equals(STORYTELLER)) {
-					return new MessageCounselorFragment();
-				} else {
 					return new MessageStorytellerFragment();
+				} else {
+					return new MessageCounselorFragment();
 				}
 			case R.id.navigation_resource:
 				return new ResourceFragment();

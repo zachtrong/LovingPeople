@@ -37,7 +37,8 @@
     <string name="action_logout">Logout</string>
     <string name="action_change_status">Change Status</string>
     <string name="action_disconnect">Disconnect</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
+    <string name="timeout">Timeout:</string>
     <string name="accept_privacy">I have read and agreed to the Privacy Policies</string>
     <string name="accept_terms">I have read and agreed to the Terms and Conditions</string>
 

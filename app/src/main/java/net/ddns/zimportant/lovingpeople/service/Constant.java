@@ -5,7 +5,10 @@ public final class Constant {
 	public static final String AUTH_URL = "http://" + INSTANCE_ADDRESS + "/auth";
 	public static final String DEFAULT_REALM_URL = "realm://" + INSTANCE_ADDRESS + "/default";
 
+	public static final int TIMEOUT = 30;
+
 	public static final String PARTNER = "Partner";
+	public static final String REQUEST = "Request";
 	public static final String COUNSELOR_ID = "counselorId";
 	public static final String STORYTELLER_ID = "storytellerId";
 
@@ -17,6 +20,7 @@ public final class Constant {
 	public static final String ERR_USER_CANNOT_CHANGE_STATUS = "You cannot change status while connecting with another";
 	public static final String ERR_USER_NOT_BOTH_COUNSELOR = "You cannot both Counselor";
 	public static final String ERR_USER_NOT_BOTH_STORYTELLER = "You cannot both Storyteller";
+	public static final String ERR_USER_DISCONNECTED = "This person has disconnected";
 
 	public static final String ERR_ADD_INFO = "Please add this information";
 }

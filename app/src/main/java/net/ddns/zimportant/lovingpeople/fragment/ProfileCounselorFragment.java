@@ -32,6 +32,7 @@ public class ProfileCounselorFragment extends ProfileFragment {
 
 	Button messageButton;
 	Button becomeStoryteller;
+	UserChat user;
 
 	@Nullable
 	@Override
@@ -62,7 +63,7 @@ public class ProfileCounselorFragment extends ProfileFragment {
 			messageButton.setVisibility(View.GONE);
 			becomeStoryteller.setVisibility(View.VISIBLE);
 
-			UserChat user = realm
+			user = realm
 					.where(UserChat.class)
 					.equalTo("id", queryId)
 					.findFirst();
@@ -84,5 +85,10 @@ public class ProfileCounselorFragment extends ProfileFragment {
 				);
 			});
 		}
+	}
+
+	@Override
+	protected UserChat getUser() {
+		return user;
 	}
 }

@@ -3,6 +3,7 @@ package net.ddns.zimportant.lovingpeople.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,8 +12,11 @@ import android.widget.TextView;
 
 import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.service.common.model.ChatRoom;
+import net.ddns.zimportant.lovingpeople.service.common.model.Request;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,7 +31,9 @@ import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANCEL;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_AVAILABLE;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_STOP_REQUEST;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
+import static net.ddns.zimportant.lovingpeople.service.Constant.REQUEST;
 import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
+import static net.ddns.zimportant.lovingpeople.service.Constant.TIMEOUT;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
@@ -42,13 +48,17 @@ public class ResponseActivity extends AppCompatActivity {
 	Button acceptButton;
 	@BindView(R.id.bt_deny)
 	Button denyButton;
+	@BindView(R.id.tv_timeout_second)
+	TextView timeout;
 
 	private Realm realm;
 	private String partnerId;
+	private String requestId;
 	private String userId;
 	private UserChat partner, user;
+	private Request request;
 	private Disposable checkPartner, checkChatRoom;
-	private boolean isLoadedView = false;
+	private CountDownTimer timer;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +66,8 @@ public class ResponseActivity extends AppCompatActivity {
 		setUpLayout();
 		setUpRealm();
 		prepareRealmData();
+		setUpTimeout();
+		setUpButton();
 	}
 
 	private void setUpLayout() {
@@ -68,12 +80,21 @@ public class ResponseActivity extends AppCompatActivity {
 	}
 
 	private void prepareRealmData() {
+		prepareRequest();
 		prepareUser();
 		preparePartner();
 	}
 
+	private void prepareRequest() {
+		requestId = getIntent().getExtras().getString(REQUEST);
+		request = realm
+				.where(Request.class)
+				.equalTo("id", requestId)
+				.findFirst();
+	}
+
 	private void prepareUser() {
-		userId = SyncUser.current().getIdentity();
+		userId = request.getPartnerId();
 		user = realm
 				.where(UserChat.class)
 				.equalTo("id", userId)
@@ -81,12 +102,7 @@ public class ResponseActivity extends AppCompatActivity {
 	}
 
 	private void preparePartner() {
-		partnerId = getIntent().getExtras().getString(PARTNER);
-		setUpPartnerView();
-		setUpCheckPartner();
-	}
-
-	private void setUpPartnerView() {
+		partnerId = request.getUserId();
 		RealmResults<UserChat> partnerRealmResults = realm
 				.where(UserChat.class)
 				.equalTo("id", partnerId)
@@ -99,61 +115,59 @@ public class ResponseActivity extends AppCompatActivity {
 		userViewLoader.startListening();
 	}
 
-	private void setUpCheckPartner() {
-		checkPartner = realm
-				.where(UserChat.class)
-				.equalTo("id", partnerId)
-				.findAllAsync()
-				.asFlowable()
-				.filter(RealmResults::isLoaded)
-				.subscribe(realmResults -> {
-					partner = realmResults.first();
-					checkPartnerAvailability();
+	private void setUpTimeout() {
+		long diff = Calendar.getInstance().getTimeInMillis() - request.getCreateAt().getTime();
+		if (diff/1000 <= TIMEOUT) {
+			long timeLeft = TIMEOUT - diff/1000;
+			timeout.setText(String.valueOf(timeLeft));
 
-					if (!isLoadedView) {
-						isLoadedView = true;
-						setUpButtons();
-					}
-				});
-	}
+			timer = new CountDownTimer(timeLeft*1000, 1000) {
+				@Override
+				public void onTick(long millisUntilFinished) {
+					timeout.setText(String.valueOf(millisUntilFinished/1000));
+				}
 
-	private void checkPartnerAvailability() {
-		if (partner == null) {
-			cancelRequest(ERR_USER_NOT_AVAILABLE);
-		} else if (!partner.getUserRequestId().equals(userId)) {
-			cancelRequest(ERR_USER_STOP_REQUEST);
+				@Override
+				public void onFinish() {
+					cancelRequest(ERR_USER_CANCEL);
+				}
+			};
+		} else {
+			cancelRequest(ERR_USER_CANCEL);
 		}
-	}
-
-	private void setUpButtons() {
-		acceptButton.setOnClickListener(v -> acceptRequest());
-		denyButton.setOnClickListener(v -> denyRequest());
-	}
-
-	private void acceptRequest() {
-		acceptButton.setOnClickListener(v -> {});
-		denyButton.setVisibility(View.GONE);
-		setUpChatRoom();
-	}
-
-	private void denyRequest() {
-		denyButton.setOnClickListener(v -> {});
-		acceptButton.setVisibility(View.GONE);
-		cancelRequest(ERR_USER_CANCEL);
 	}
 
 	private void cancelRequest(@Nullable String error) {
-		if (!checkPartner.isDisposed()) {
-			checkPartner.dispose();
+		if (timer != null) {
+			timer.cancel();
 		}
 		realm.executeTransaction(bgRealm -> {
-			user.setUserRequestId("");
-			partner.setUserRequestId("");
+			request.setExpired(true);
 		});
 		Intent intent = new Intent();
 		intent.putExtra("error", error);
 		setResult(Activity.RESULT_OK, intent);
 		finish();
+	}
+
+	private void setUpButton() {
+		acceptButton.setOnClickListener((v) -> acceptRequest());
+		denyButton.setOnClickListener((v) -> denyRequest());
+	}
+
+	private void acceptRequest() {
+		if (timer != null) {
+			timer.cancel();
+		}
+		acceptButton.setVisibility(View.GONE);
+		denyButton.setVisibility(View.GONE);
+		setUpChatRoom();
+	}
+
+	private void denyRequest() {
+		acceptButton.setVisibility(View.GONE);
+		denyButton.setVisibility(View.GONE);
+		cancelRequest(ERR_USER_CANCEL);
 	}
 
 	private void setUpChatRoom() {
@@ -172,6 +186,7 @@ public class ResponseActivity extends AppCompatActivity {
 					}
 
 					if (chatRoom != null) {
+						checkChatRoom.dispose();
 						responseChatRoom(chatRoom.getId());
 					} else {
 						createChatRoom();
@@ -180,10 +195,11 @@ public class ResponseActivity extends AppCompatActivity {
 	}
 
 	private void responseChatRoom(String chatRoomId) {
-		checkChatRoom.dispose();
-		if (!checkPartner.isDisposed()) {
-			checkPartner.dispose();
-		}
+		realm.executeTransaction(bgRealm -> {
+			request.setConnectedRoom(chatRoomId);
+			request.setExpired(true);
+			user.setConnectedRoom(chatRoomId);
+		});
 
 		checkPartner = realm
 				.where(UserChat.class)
@@ -198,26 +214,23 @@ public class ResponseActivity extends AppCompatActivity {
 						checkPartner.dispose();
 					}
 				});
+	}
+
+	private void createChatRoom() {
 		realm.executeTransaction(bgRealm -> {
-			user.setStatus(USER_BUSY);
-			user.setConnectedRoom(chatRoomId);
+			bgRealm.insert(new ChatRoom(getStorytellerId(), getCounselorId()));
 		});
 	}
 
 	private void finishActivitySuccess() {
-		realm.executeTransaction(bgRealm -> user.setStatus(USER_BUSY));
+		if (timer != null) {
+			timer.cancel();
+		}
 		Intent intent = new Intent();
 		intent.putExtra(COUNSELOR_ID, getCounselorId());
 		intent.putExtra(STORYTELLER_ID, getStorytellerId());
 		setResult(Activity.RESULT_OK, intent);
 		finish();
-	}
-
-	private void createChatRoom() {
-		checkPartner.dispose();
-		realm.executeTransaction(bgRealm -> {
-			bgRealm.insert(new ChatRoom(getStorytellerId(), getCounselorId()));
-		});
 	}
 
 	private String getStorytellerId() {
@@ -234,6 +247,10 @@ public class ResponseActivity extends AppCompatActivity {
 		} else {
 			return userId;
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
 	}
 
 	@Override

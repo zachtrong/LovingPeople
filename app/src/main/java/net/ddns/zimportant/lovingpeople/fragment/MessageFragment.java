@@ -134,43 +134,13 @@ public abstract class MessageFragment extends BaseFragment {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.menu_message, menu);
+		//inflater.inflate(R.menu.menu_message, menu);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.action_change_status) {
-			startDialogChangeStatus();
-		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	private void startDialogChangeStatus() {
-		String[] statusList = {USER_ONLINE, USER_BUSY, USER_OFFLINE};
-		new AlertDialog.Builder(getContext())
-				.setTitle("Change Status")
-				.setSingleChoiceItems(statusList, 0, null)
-				.setPositiveButton("OK", (dialog, whichButton) -> {
-					dialog.dismiss();
-					int selectedPosition = ((AlertDialog)dialog)
-							.getListView()
-							.getCheckedItemPosition();
-					if (realm != null) {
-						if (currentUser.getConnectedRoom().length() == 0) {
-							realm.executeTransaction(bgRealm -> {
-								currentUser.setStatus(statusList[selectedPosition]);
-							});
-						} else {
-							AppUtils.showToast(
-									getContext(),
-									ERR_USER_CANNOT_CHANGE_STATUS,
-									true
-							);
-						}
-					}
-				})
-				.show();
 	}
 
 	@Override

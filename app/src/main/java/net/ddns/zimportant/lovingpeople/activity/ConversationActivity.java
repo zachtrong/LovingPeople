@@ -32,6 +32,7 @@ import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
+import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_DISCONNECTED;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
@@ -161,7 +162,7 @@ public class ConversationActivity extends AppCompatActivity
 	}
 
 	private void setUpButton() {
-		if (isChatRoomConnected()) {
+		if (isChatRoomPartialConnected()) {
 			buttonConnect.setVisibility(View.GONE);
 		} else {
 			buttonConnect.setOnClickListener(v -> {
@@ -178,6 +179,12 @@ public class ConversationActivity extends AppCompatActivity
 				.equals(chatRoom.getId());
 	}
 
+	private boolean isChatRoomPartialConnected() {
+		return chatRoom != null
+				&& getUser().getConnectedRoom()
+				.equals(chatRoom.getId());
+	}
+
 	private void startActivityRequest() {
 		Intent intent;
 		intent = new Intent(this, RequestActivity.class);
@@ -190,6 +197,14 @@ public class ConversationActivity extends AppCompatActivity
 			return counselorId;
 		} else {
 			return storytellerId;
+		}
+	}
+
+	private UserChat getUser() {
+		if (SyncUser.current().getIdentity().equals(storytellerId)) {
+			return storyteller;
+		} else {
+			return counselor;
 		}
 	}
 
@@ -226,8 +241,12 @@ public class ConversationActivity extends AppCompatActivity
 
 	@Override
 	public boolean onSubmit(CharSequence input) {
-		if (!isChatRoomConnected()) {
+		if (!isChatRoomPartialConnected()) {
 			restartActivity();
+			return false;
+		}
+		if (!isChatRoomConnected()) {
+			AppUtils.showToast(this, ERR_USER_DISCONNECTED, true);
 			return false;
 		}
 		Message message = new Message(
@@ -260,12 +279,13 @@ public class ConversationActivity extends AppCompatActivity
 	private void disconnectChatRoom() {
 		if (isChatRoomConnected()) {
 			realm.executeTransaction(bgRealm -> {
-				storyteller.setUserRequestId("");
 				storyteller.setConnectedRoom("");
-				storyteller.setStatus(USER_ONLINE);
-				counselor.setUserRequestId("");
 				counselor.setConnectedRoom("");
-				counselor.setStatus(USER_ONLINE);
+			});
+			restartActivity();
+		} else if (isChatRoomPartialConnected()) {
+			realm.executeTransaction(bgRealm -> {
+				getUser().setConnectedRoom("");
 			});
 			restartActivity();
 		} else {

@@ -37,7 +37,6 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:weightSum="32"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/tv_name"
         android:layout_width="wrap_content"
@@ -51,9 +50,8 @@
             android:layout_height="wrap_content" />
 
         <Space
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            android:layout_width="5dp"
+            android:layout_height="match_parent" />
 
         <TextView
             android:textColor="#fff"

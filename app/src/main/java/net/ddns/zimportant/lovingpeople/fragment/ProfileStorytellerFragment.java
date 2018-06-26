@@ -8,9 +8,10 @@ import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 
 public class ProfileStorytellerFragment extends ProfileFragment {
+	UserChat user;
 	@Override
 	protected void setUpProfile() {
-		UserChat user = realm
+		user = realm
 				.where(UserChat.class)
 				.equalTo("id", queryId)
 				.findFirst();
@@ -36,5 +37,10 @@ public class ProfileStorytellerFragment extends ProfileFragment {
 				RegisterActivity.open(getContext());
 			}
 		});
+	}
+
+	@Override
+	protected UserChat getUser() {
+		return user;
 	}
 }

@@ -20,12 +20,11 @@ import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.fragment.MessageStorytellerFragment;
 import net.ddns.zimportant.lovingpeople.fragment.HomeFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileCounselorFragment;
-import net.ddns.zimportant.lovingpeople.fragment.ProfileFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ProfileStorytellerFragment;
 import net.ddns.zimportant.lovingpeople.fragment.ResourceFragment;
 import net.ddns.zimportant.lovingpeople.fragment.MessageCounselorFragment;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
-import net.ddns.zimportant.lovingpeople.service.helper.ResponseHelper;
+import net.ddns.zimportant.lovingpeople.service.helper.RequestHelper;
 import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnCreateConversation;
 import net.ddns.zimportant.lovingpeople.service.interfaces.OnResponse;
@@ -40,6 +39,7 @@ import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
+import static net.ddns.zimportant.lovingpeople.service.Constant.REQUEST;
 import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
 
@@ -182,7 +182,7 @@ public class MainActivity extends BaseActivity
 	}
 
 	private void setUpUserRequest() {
-		ResponseHelper.getInstance()
+		RequestHelper.getInstance()
 				.register(this, realm);
 	}
 
@@ -214,9 +214,9 @@ public class MainActivity extends BaseActivity
 	}
 
 	@Override
-	public void onResponse(String partner) {
+	public void onResponse(String requestId) {
 		Intent intent = new Intent(this, ResponseActivity.class);
-		intent.putExtra(PARTNER, partner);
+		intent.putExtra(REQUEST, requestId);
 		startActivityForResult(intent, REQUEST_CODE);
 	}
 

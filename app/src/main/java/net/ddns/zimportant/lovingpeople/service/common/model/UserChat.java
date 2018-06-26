@@ -30,7 +30,6 @@ public class UserChat extends RealmObject implements IUser {
 	private String currentUserType;
 
 	private RealmList<String> fields;
-	private String userRequestId;
 	private String connectedRoom;
 
 	private String introduce;
@@ -48,7 +47,6 @@ public class UserChat extends RealmObject implements IUser {
 		this.status = USER_ONLINE;
 		this.userType = STORYTELLER;
 		this.currentUserType = STORYTELLER;
-		this.userRequestId = "";
 		this.connectedRoom = "";
 	}
 
@@ -115,14 +113,6 @@ public class UserChat extends RealmObject implements IUser {
 
 	public void setCurrentUserType(String currentUserType) {
 		this.currentUserType = currentUserType;
-	}
-
-	public String getUserRequestId() {
-		return userRequestId;
-	}
-
-	public void setUserRequestId(String userRequestId) {
-		this.userRequestId = userRequestId;
 	}
 
 	public String getConnectedRoom() {

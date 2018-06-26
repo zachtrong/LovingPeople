@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +23,7 @@ import net.ddns.zimportant.lovingpeople.R;
 import net.ddns.zimportant.lovingpeople.activity.RegisterActivity;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
+import net.ddns.zimportant.lovingpeople.service.utils.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +31,11 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.SyncUser;
 
+import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANNOT_CHANGE_STATUS;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_OFFLINE;
+import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public abstract class ProfileFragment extends BaseFragment {
 
@@ -124,9 +130,40 @@ public abstract class ProfileFragment extends BaseFragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.action_logout) {
+		if (item.getItemId() == R.id.action_change_status) {
+			startDialogChangeStatus();
+		} else if (item.getItemId() == R.id.action_logout) {
 			getMainActivity().logOutRealm();
 		}
 		return true;
 	}
+
+	private void startDialogChangeStatus() {
+		String[] statusList = {USER_ONLINE, USER_BUSY, USER_OFFLINE};
+		new AlertDialog.Builder(getContext())
+				.setTitle("Change Status")
+				.setSingleChoiceItems(statusList, 0, null)
+				.setPositiveButton("OK", (dialog, whichButton) -> {
+					dialog.dismiss();
+					int selectedPosition = ((AlertDialog)dialog)
+							.getListView()
+							.getCheckedItemPosition();
+					if (realm != null && getUser() != null) {
+						if (getUser().getConnectedRoom().length() == 0) {
+							realm.executeTransaction(bgRealm -> {
+								getUser().setStatus(statusList[selectedPosition]);
+							});
+						} else {
+							AppUtils.showToast(
+									getContext(),
+									ERR_USER_CANNOT_CHANGE_STATUS,
+									true
+							);
+						}
+					}
+				})
+				.show();
+	}
+
+	protected abstract UserChat getUser();
 }

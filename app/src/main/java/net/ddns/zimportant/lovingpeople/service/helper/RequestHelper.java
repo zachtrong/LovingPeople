@@ -16,6 +16,7 @@ import io.realm.OrderedRealmCollectionChangeListener;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.TIMEOUT;
@@ -67,6 +68,7 @@ public class RequestHelper {
 				.equalTo("partnerId", SyncUser.current().getIdentity())
 				.and()
 				.equalTo("isExpired", false)
+				.sort("createAt", Sort.DESCENDING)
 				.findAllAsync()
 				.asFlowable()
 				.filter(RealmResults::isLoaded)

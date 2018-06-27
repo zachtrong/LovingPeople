@@ -181,9 +181,8 @@ public class MainActivity extends BaseActivity
 	}
 
 	private void setUpUserRequest() {
-		/*RequestHelper.getInstance()
+		RequestHelper.getInstance()
 				.register(this, realm);
-				*/
 	}
 
 	@Override

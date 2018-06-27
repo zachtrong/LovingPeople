@@ -123,7 +123,6 @@ public class MainActivity extends BaseActivity
 		if (syncUser != null) {
 			syncUser.logOut();
 			closeAllRealm();
-			Realm.deleteRealm(Realm.getDefaultConfiguration());
 			Intent intent = new Intent(MainActivity.this, WelcomeActivity.class);
 			startActivity(intent);
 			finish();
@@ -182,8 +181,9 @@ public class MainActivity extends BaseActivity
 	}
 
 	private void setUpUserRequest() {
-		RequestHelper.getInstance()
+		/*RequestHelper.getInstance()
 				.register(this, realm);
+				*/
 	}
 
 	@Override

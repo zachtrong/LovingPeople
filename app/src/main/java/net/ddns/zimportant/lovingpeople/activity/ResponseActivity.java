@@ -103,6 +103,10 @@ public class ResponseActivity extends AppCompatActivity {
 
 	private void preparePartner() {
 		partnerId = request.getUserId();
+		partner = realm
+				.where(UserChat.class)
+				.equalTo("id", partnerId)
+				.findFirst();
 		RealmResults<UserChat> partnerRealmResults = realm
 				.where(UserChat.class)
 				.equalTo("id", partnerId)
@@ -124,14 +128,14 @@ public class ResponseActivity extends AppCompatActivity {
 			timer = new CountDownTimer(timeLeft*1000, 1000) {
 				@Override
 				public void onTick(long millisUntilFinished) {
-					timeout.setText(String.valueOf(millisUntilFinished/1000));
+					timeout.setText(String.valueOf(millisUntilFinished/1000).concat("s"));
 				}
 
 				@Override
 				public void onFinish() {
 					cancelRequest(ERR_USER_CANCEL);
 				}
-			};
+			}.start();
 		} else {
 			cancelRequest(ERR_USER_CANCEL);
 		}
@@ -141,9 +145,11 @@ public class ResponseActivity extends AppCompatActivity {
 		if (timer != null) {
 			timer.cancel();
 		}
-		realm.executeTransaction(bgRealm -> {
-			request.setExpired(true);
-		});
+		if (request.isValid()) {
+			realm.executeTransaction(bgRealm -> {
+				request.setExpired(true);
+			});
+		}
 		Intent intent = new Intent();
 		intent.putExtra("error", error);
 		setResult(Activity.RESULT_OK, intent);

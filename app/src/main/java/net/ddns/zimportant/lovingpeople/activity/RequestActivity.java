@@ -4,15 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import net.ddns.zimportant.lovingpeople.R;
+import net.ddns.zimportant.lovingpeople.service.common.model.Request;
 import net.ddns.zimportant.lovingpeople.service.common.model.UserChat;
 import net.ddns.zimportant.lovingpeople.service.helper.UserViewLoader;
 
@@ -25,20 +22,13 @@ import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANCEL;
-import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_AVAILABLE;
-import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_BOTH_COUNSELOR;
-import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_BOTH_STORYTELLER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_REQUEST_MORE;
+import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_STOP_REQUEST;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.TIMEOUT;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
 public class RequestActivity extends AppCompatActivity {
 
-	@BindView(R.id.bt_cancel)
-	Button buttonCancel;
 	@BindView(R.id.tv_name)
 	TextView nameTextView;
 	@BindView(R.id.civ_avatar)
@@ -47,7 +37,10 @@ public class RequestActivity extends AppCompatActivity {
 	TextView timeout;
 
 	private Realm realm;
-	private String storytellerId, counselorId;
+	private String userId, partnerId;
+	private Request request;
+	private CountDownTimer timer;
+	private Disposable checkRequest;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +50,8 @@ public class RequestActivity extends AppCompatActivity {
 		setUpRealm();
 		prepareInformation();
 		prepareRealmData();
+		clearRequest();
+		startRequest();
 	}
 
 	private void setUpRealm() {
@@ -64,14 +59,14 @@ public class RequestActivity extends AppCompatActivity {
 	}
 
 	private void prepareInformation() {
-		storytellerId = getIntent().getExtras().getString(COUNSELOR);
-		counselorId = getIntent().getExtras().getString(STORYTELLER);
+		userId = SyncUser.current().getIdentity();
+		partnerId = getIntent().getExtras().getString(PARTNER);
 	}
 
 	private void prepareRealmData() {
 		RealmResults<UserChat> partner = realm
 				.where(UserChat.class)
-				.equalTo("id", getPartnerId())
+				.equalTo("id", partnerId)
 				.findAllAsync();
 		UserViewLoader userViewLoader = new UserViewLoader.Builder(partner)
 				.setAvatarView(avatar)
@@ -80,21 +75,89 @@ public class RequestActivity extends AppCompatActivity {
 		userViewLoader.startListening();
 	}
 
+	private void startRequest() {
+		realm.executeTransaction(bgRealm -> {
+			request = new Request(userId, partnerId);
+			realm.insert(request);
+		});
+
+		startListeningChange();
+		setUpTimeout();
+	}
+
+	private void clearRequest() {
+		RealmResults<Request> requests = realm
+				.where(Request.class)
+				.equalTo("userId", userId)
+				.and()
+				.equalTo("isExpired", false)
+				.findAll();
+
+		realm.executeTransaction(bgRealm -> {
+			for (Request request : requests) {
+				request.setExpired(true);
+			}
+		});
+	}
+
+	private void startListeningChange() {
+		checkRequest = realm
+				.where(Request.class)
+				.equalTo("id", request.getId())
+				.findAllAsync()
+				.asFlowable()
+				.filter(RealmResults::isLoaded)
+				.filter(realmResults -> realmResults.size() != 0)
+				.subscribe(realmResults -> {
+					request = realmResults.first();
+
+					if (request.isExpired()) {
+						checkRequest.dispose();
+						checkRequestResult();
+					}
+				});
+	}
+
+	private void checkRequestResult() {
+		String connectedRoomId = request.getConnectedRoom();
+		if (connectedRoomId.length() == 0) {
+			cancelRequest(ERR_USER_STOP_REQUEST);
+		} else {
+			realm.executeTransaction(bgRealm -> {
+				UserChat user = realm
+						.where(UserChat.class)
+						.equalTo("id", SyncUser.current().getIdentity())
+						.findFirst();
+				user.setConnectedRoom(connectedRoomId);
+			});
+			finishActivitySuccess();
+		}
+	}
+
 	private void cancelRequest(String error) {
+		if (timer != null) {
+			timer.cancel();
+		}
+		if (checkRequest != null && !checkRequest.isDisposed()) {
+			checkRequest.dispose();
+		}
+		if (request != null && request.isValid()) {
+			realm.executeTransaction(bgRealm -> {
+				request.setExpired(true);
+			});
+		}
 		Intent i = new Intent();
 		i.putExtra("error", error);
 		setResult(Activity.RESULT_OK, i);
 		finish();
 	}
 
-	private void setUpButtonCancel() {
+	private void setUpTimeout() {
 		timeout.setText(String.valueOf(TIMEOUT));
-		/*
-		countDownTimer =
-				new CountDownTimer(TIMEOUT * 1000, 1000) {
+		timer = new CountDownTimer(TIMEOUT * 1000, 1000) {
 			@Override
 			public void onTick(long millisUntilFinished) {
-				timeout.setText(String.valueOf(millisUntilFinished / 1000).concat("s"));
+				timeout.setText(String.valueOf(millisUntilFinished/1000).concat("s"));
 			}
 
 			@Override
@@ -102,7 +165,6 @@ public class RequestActivity extends AppCompatActivity {
 				cancelRequest(ERR_USER_CANCEL);
 			}
 		}.start();
-		*/
 	}
 
 	private void finishActivitySuccess() {
@@ -120,17 +182,5 @@ public class RequestActivity extends AppCompatActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		realm.close();
-	}
-
-	private String getUserId() {
-		return SyncUser.current().getIdentity();
-	}
-
-	private String getPartnerId() {
-		if (SyncUser.current().getIdentity().equals(storytellerId)) {
-			return counselorId;
-		} else {
-			return storytellerId;
-		}
 	}
 }

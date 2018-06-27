@@ -1,6 +1,7 @@
 package net.ddns.zimportant.lovingpeople.service.common.model;
 
 import java.util.Date;
+import java.util.UUID;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -16,10 +17,22 @@ public class Request extends RealmObject {
 	private String partnerId;
 	@Required
 	private Date createAt;
-	@Required
 	private boolean isExpired;
 	@Required
 	private String connectedRoom;
+
+	public Request() {
+
+	}
+
+	public Request(String userId, String partnerId) {
+		this.id = UUID.randomUUID().toString();
+		this.userId = userId;
+		this.partnerId = partnerId;
+		this.createAt = new Date();
+		this.isExpired = false;
+		this.connectedRoom = "";
+	}
 
 	public String getId() {
 		return id;

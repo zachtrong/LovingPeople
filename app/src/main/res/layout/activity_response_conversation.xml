@@ -16,6 +16,8 @@
         android:id="@+id/tv_name"
         android:layout_centerHorizontal="true"
         android:textColor="#fff"
+        android:paddingStart="@dimen/text_normal"
+        android:paddingEnd="@dimen/text_normal"
         android:textSize="16dp"
         android:text="@string/loading"
         android:layout_marginTop="10dp"

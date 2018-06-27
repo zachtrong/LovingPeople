@@ -76,7 +76,7 @@ public class RequestHelper {
 
 					Date createAt = request.getCreateAt();
 					long diff = Calendar.getInstance().getTimeInMillis() - createAt.getTime();
-					if (diff / 1000 <= TIMEOUT) {
+					if (diff/1000 <= TIMEOUT) {
 						onNotification(request.getId());
 					}
 				});

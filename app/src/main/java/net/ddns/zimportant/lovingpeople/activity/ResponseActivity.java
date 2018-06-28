@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,21 +23,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.disposables.Disposable;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.COUNSELOR_ID;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANCEL;
-import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_AVAILABLE;
-import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_STOP_REQUEST;
-import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.REQUEST;
 import static net.ddns.zimportant.lovingpeople.service.Constant.STORYTELLER_ID;
 import static net.ddns.zimportant.lovingpeople.service.Constant.TIMEOUT;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COUNSELOR;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
-import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_BUSY;
 
-public class ResponseActivity extends AppCompatActivity {
+public class ResponseActivity extends BaseConnectActivity {
 
 	@BindView(R.id.civ_avatar)
 	CircleImageView avatar;
@@ -63,11 +57,17 @@ public class ResponseActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setUpInstance();
 		setUpLayout();
 		setUpRealm();
 		prepareRealmData();
 		setUpTimeout();
 		setUpButton();
+	}
+
+	private void setUpInstance() {
+		stopAllInstances();
+		addInstance(this);
 	}
 
 	private void setUpLayout() {
@@ -262,6 +262,7 @@ public class ResponseActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		removeInstance(this);
 		realm.close();
 	}
 }

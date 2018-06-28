@@ -39,7 +39,7 @@ import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.COU
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.STORYTELLER;
 import static net.ddns.zimportant.lovingpeople.service.common.model.UserChat.USER_ONLINE;
 
-public class ConversationActivity extends AppCompatActivity
+public class ConversationActivity extends BaseConnectActivity
 		implements MessageInput.InputListener {
 
 	public static final int REQUEST_CODE = 1;
@@ -74,10 +74,16 @@ public class ConversationActivity extends AppCompatActivity
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setUpInstance();
 		setUpLayout();
 		setUpRealm();
 		setUpUser();
 		setUpChatRoom();
+	}
+
+	private void setUpInstance() {
+		stopAllInstances();
+		addInstance(this);
 	}
 
 	private void setUpLayout() {
@@ -129,14 +135,9 @@ public class ConversationActivity extends AppCompatActivity
 						if (!isLoadedView) {
 							isLoadedView = true;
 							setUpMessages();
-							setUpButton();
-						}
-					} else {
-						if (!isLoadedView) {
-							isLoadedView = true;
-							setUpButton();
 						}
 					}
+					setUpButton();
 				});
 	}
 
@@ -165,6 +166,7 @@ public class ConversationActivity extends AppCompatActivity
 		if (isChatRoomPartialConnected()) {
 			buttonConnect.setVisibility(View.GONE);
 		} else {
+			buttonConnect.setVisibility(View.VISIBLE);
 			buttonConnect.setOnClickListener(v -> {
 				startActivityRequest();
 			});
@@ -212,6 +214,7 @@ public class ConversationActivity extends AppCompatActivity
 	protected void onDestroy() {
 		super.onDestroy();
 		realm.close();
+		removeInstance(this);
 	}
 
 	@Override

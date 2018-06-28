@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import net.ddns.zimportant.lovingpeople.R;
@@ -22,12 +21,11 @@ import io.realm.RealmResults;
 import io.realm.SyncUser;
 
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_CANCEL;
-import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_NOT_REQUEST_MORE;
 import static net.ddns.zimportant.lovingpeople.service.Constant.ERR_USER_STOP_REQUEST;
 import static net.ddns.zimportant.lovingpeople.service.Constant.PARTNER;
 import static net.ddns.zimportant.lovingpeople.service.Constant.TIMEOUT;
 
-public class RequestActivity extends AppCompatActivity {
+public class RequestActivity extends BaseConnectActivity {
 
 	@BindView(R.id.tv_name)
 	TextView nameTextView;
@@ -45,13 +43,23 @@ public class RequestActivity extends AppCompatActivity {
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_request_conversation);
-		ButterKnife.bind(this);
+		setUpInstance();
+		setUpLayout();
 		setUpRealm();
 		prepareInformation();
 		prepareRealmData();
 		clearRequest();
 		startRequest();
+	}
+
+	private void setUpInstance() {
+		stopAllInstances();
+		addInstance(this);
+	}
+
+	private void setUpLayout() {
+		setContentView(R.layout.activity_request_conversation);
+		ButterKnife.bind(this);
 	}
 
 	private void setUpRealm() {
@@ -181,6 +189,7 @@ public class RequestActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		removeInstance(this);
 		realm.close();
 	}
 }

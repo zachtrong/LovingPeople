@@ -76,6 +76,10 @@ public class RequestHelper {
 				.subscribe(realmResults -> {
 					Request request = realmResults.first();
 
+					if (!request.isValid() || request.isExpired()) {
+						return;
+					}
+
 					Date createAt = request.getCreateAt();
 					long diff = Calendar.getInstance().getTimeInMillis() - createAt.getTime();
 					if (diff/1000 <= TIMEOUT) {
